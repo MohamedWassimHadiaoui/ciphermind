@@ -1,0 +1,164 @@
+[
+  {
+    "id": "biat_bank_phishing",
+    "category": "Banking Phishing",
+    "target": "BIAT (Banque Internationale Arabe de Tunisie)",
+    "language": "fr/darija",
+    "description": "Fake emails pretending to be from BIAT bank asking customers to verify their account or update card information. Often uses biat-secure.com or biat-online.tn fake domains.",
+    "indicators": [
+      "Urgent account verification request",
+      "Fake domain resembling biat.com.tn",
+      "Asks for RIB (Relevé d'Identité Bancaire) or card number",
+      "Threatens account suspension"
+    ],
+    "example_subjects": [
+      "Vérification urgente de votre compte BIAT",
+      "Mise à jour obligatoire - BIAT Net",
+      "Votre carte BIAT a été bloquée"
+    ],
+    "severity": "critical",
+    "remediation": "Never click links in emails claiming to be from BIAT. Always go directly to biat.com.tn. Report to BIAT's official fraud line."
+  },
+  {
+    "id": "la_poste_tunisienne",
+    "category": "Postal/Delivery Phishing",
+    "target": "La Poste Tunisienne",
+    "language": "fr",
+    "description": "Scam emails or SMS claiming a package is waiting at La Poste, requiring payment of customs fees via a fake link. Targets online shoppers.",
+    "indicators": [
+      "Fake package delivery notification",
+      "Request for customs fee payment",
+      "Link to fake La Poste website",
+      "SMS with shortened URL"
+    ],
+    "example_subjects": [
+      "Votre colis est en attente - La Poste Tunisienne",
+      "Frais de douane à régler pour votre livraison",
+      "Confirmez votre adresse de livraison"
+    ],
+    "severity": "high",
+    "remediation": "Verify tracking numbers on rapidposte.poste.tn. Never pay fees via email links. Visit your local post office."
+  },
+  {
+    "id": "ooredoo_tunisie",
+    "category": "Telecom Phishing",
+    "target": "Ooredoo Tunisie",
+    "language": "fr/darija",
+    "description": "Fake promotional SMS or emails claiming free data or prize winnings from Ooredoo. Redirects to credential-harvesting pages.",
+    "indicators": [
+      "Too-good-to-be-true data offers",
+      "Prize winning notifications",
+      "Link to non-ooredoo.tn domain",
+      "Request for Ooredoo account credentials"
+    ],
+    "example_subjects": [
+      "Félicitations! Vous avez gagné 10GB Ooredoo",
+      "Offre spéciale Ooredoo - Internet gratuit",
+      "Rechargez et gagnez avec Ooredoo"
+    ],
+    "severity": "high",
+    "remediation": "Ooredoo never asks for passwords via SMS. Check offers on ooredoo.tn or the My Ooredoo app. Report suspicious SMS to 1100."
+  },
+  {
+    "id": "cnss_social_security",
+    "category": "Government Phishing",
+    "target": "CNSS (Caisse Nationale de Sécurité Sociale)",
+    "language": "fr",
+    "description": "Emails impersonating CNSS asking citizens to update their social security information or claim reimbursements through fake portals.",
+    "indicators": [
+      "Request to update personal CNSS information",
+      "Fake reimbursement claims",
+      "Link to non-cnss.tn domain",
+      "Asks for CIN (Carte d'Identité Nationale) number"
+    ],
+    "example_subjects": [
+      "Mise à jour de votre dossier CNSS",
+      "Remboursement CNSS en attente",
+      "Vérifiez vos droits CNSS"
+    ],
+    "severity": "critical",
+    "remediation": "CNSS never requests personal data by email. Visit cnss.tn directly or go to your local CNSS office."
+  },
+  {
+    "id": "job_scam_tunisia",
+    "category": "Employment Scam",
+    "target": "Tunisian Youth / Job Seekers",
+    "language": "fr/darija",
+    "description": "Fake job offers targeting Tunisian youth with promises of high salaries abroad (Qatar, UAE, Canada). Asks for upfront fees or passport copies.",
+    "indicators": [
+      "Unrealistic salary promises",
+      "Upfront payment required for visa/processing",
+      "Generic company names",
+      "Requests passport or CIN copies",
+      "Poor French grammar"
+    ],
+    "example_subjects": [
+      "Offre d'emploi au Qatar - Salaire 5000 DT/mois",
+      "Recrutement urgent - Canada Immigration",
+      "Travail à l'étranger - Aucune expérience requise"
+    ],
+    "severity": "high",
+    "remediation": "Legitimate employers never ask for upfront fees. Verify job offers through ANETI (Agence Nationale pour l'Emploi). Never send passport copies by email."
+  },
+  {
+    "id": "crypto_investment_scam",
+    "category": "Financial Scam",
+    "target": "Tunisian Citizens",
+    "language": "fr/darija",
+    "description": "Social media ads and messages promoting fake crypto investment platforms promising guaranteed returns. Often uses testimonials from fake Tunisian success stories.",
+    "indicators": [
+      "Guaranteed high returns (e.g., 500% in a week)",
+      "Pressure to invest quickly",
+      "Fake testimonials with Tunisian names",
+      "Unregulated platform",
+      "Request for bank transfer or e-Dinar"
+    ],
+    "example_subjects": [
+      "Devenez riche avec le Bitcoin - Méthode tunisienne",
+      "Investissement garanti - 1000 DT = 5000 DT en 7 jours",
+      "Un Tunisien gagne 50000 DT par mois grâce au trading"
+    ],
+    "severity": "critical",
+    "remediation": "No investment guarantees returns. Check with BCT (Banque Centrale de Tunisie) for authorized platforms. Report to Sub-Direction of Cybercrime."
+  },
+  {
+    "id": "tunisie_telecom_scam",
+    "category": "Telecom Phishing",
+    "target": "Tunisie Telecom Customers",
+    "language": "fr",
+    "description": "Fake bill payment notifications or account suspension threats impersonating Tunisie Telecom.",
+    "indicators": [
+      "Fake unpaid bill notifications",
+      "Threat of line suspension",
+      "Link to fake payment portal",
+      "Asks for credit card details"
+    ],
+    "example_subjects": [
+      "Facture impayée - Tunisie Telecom",
+      "Votre ligne sera suspendue dans 24h",
+      "Régularisez votre situation - TT"
+    ],
+    "severity": "high",
+    "remediation": "Check bills on tunisietelecom.tn or the TT app. Never enter card details from email links."
+  },
+  {
+    "id": "e_dinar_phishing",
+    "category": "Digital Payment Phishing",
+    "target": "e-Dinar Smart Users",
+    "language": "fr",
+    "description": "Phishing targeting La Poste's e-Dinar Smart digital wallet users, asking to verify accounts or claiming unauthorized transactions.",
+    "indicators": [
+      "Fake e-Dinar Smart login page",
+      "Unauthorized transaction alerts",
+      "Account verification requests",
+      "Link to non-poste.tn domain"
+    ],
+    "example_subjects": [
+      "Activité suspecte sur votre e-Dinar Smart",
+      "Vérification de votre portefeuille e-Dinar",
+      "Transaction non autorisée détectée"
+    ],
+    "severity": "critical",
+    "remediation": "Check e-Dinar transactions in the official app only. La Poste never asks for PIN by email. Report to your local post office."
+  }
+]

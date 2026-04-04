@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+groq
+google-genai
+chromadb
+scikit-learn
+pydantic
+python-dotenv
+jinja2
+aiofiles
