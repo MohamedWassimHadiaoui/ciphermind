@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "BIAT Bank Phishing (Critical)",
+    "sender": "security@biat-secure.com",
+    "content": "Cher(e) client(e) BIAT,\n\nNous avons détecté une activité suspecte sur votre compte bancaire. Pour des raisons de sécurité, votre compte sera suspendu dans 24h si vous ne vérifiez pas vos informations.\n\nCliquez ici pour vérifier votre compte: http://biat-secure.com/verify?id=TN2024\n\nVous devrez fournir:\n- Votre numéro de carte bancaire\n- Votre code PIN\n- Votre CIN (Carte d'Identité Nationale)\n\nCette vérification est obligatoire selon les nouvelles réglementations de la BCT.\n\nService Sécurité BIAT\nNuméro gratuit: 80 100 200"
+  },
+  {
+    "id": 2,
+    "name": "La Poste Package Scam (High)",
+    "sender": "noreply@laposte-tn.delivery.xyz",
+    "content": "La Poste Tunisienne - Notification de livraison\n\nVotre colis N° TN-2024-88291 est en attente au bureau de poste.\n\nDes frais de douane de 45.500 DT doivent être réglés avant la livraison.\n\nPayez maintenant pour recevoir votre colis: http://192.168.1.100/laposte/pay\n\nAttention: Si le paiement n'est pas effectué dans 48h, votre colis sera retourné à l'expéditeur.\n\nLa Poste Tunisienne\nService Colis International"
+  },
+  {
+    "id": 3,
+    "name": "Job Scam - Qatar (High)",
+    "sender": "hr@qatar-jobs-international.com",
+    "content": "Offre d'emploi exceptionnelle au Qatar!\n\nSalaire: 5000 DT/mois + logement gratuit + billet d'avion\nPoste: Technicien / Ouvrier / Administratif\nExpérience requise: Aucune!\n\nPour postuler, envoyez-nous:\n1. Copie de votre passeport\n2. Copie de votre CIN\n3. Frais de dossier: 500 DT (via mandat postal)\n\nPlaces limitées! Répondez immédiatement.\nAgence Internationale de Recrutement Qatar\nWhatsApp: +974 XX XXX XXX"
+  },
+  {
+    "id": 4,
+    "name": "Ooredoo Fake Prize (Medium)",
+    "sender": "promo@ooredoo-prizes.click",
+    "content": "Félicitations!\n\nVotre numéro Ooredoo a été sélectionné pour gagner 50GB d'internet gratuit!\n\nPour activer votre prix, connectez-vous avec votre compte Ooredoo:\nhttp://ooredoo-prizes.click/claim\n\nEntrez votre numéro de téléphone et mot de passe Ooredoo pour confirmer.\n\nOffre valable 24h seulement!\nOoredoo Tunisie"
+  },
+  {
+    "id": 5,
+    "name": "Legitimate BIAT Email (Safe)",
+    "sender": "newsletter@biat.com.tn",
+    "content": "Cher(e) client(e),\n\nNous avons le plaisir de vous informer que les nouveaux taux d'épargne BIAT sont désormais disponibles.\n\nConsultez les détails sur notre site officiel: https://www.biat.com.tn/epargne\n\nPour toute question, contactez votre agence BIAT ou appelez le 71 139 000.\n\nCordialement,\nBIAT - Banque Internationale Arabe de Tunisie\nSiège social: 70-72, Avenue Habib Bourguiba, 1000 Tunis"
+  }
+]
