@@ -140,11 +140,18 @@ ciphermind/
 │       └── tunisian_patterns.json # 8 Tunisian threat patterns
 ├── frontend/
 │   └── index.html                 # Dashboard (single-page app, 3 tabs)
+├── samples/
+│   └── phishing_samples.json      # 5 demo samples (4 phishing + 1 legit)
+├── docs/
+│   ├── architecture.md            # Detailed architecture document
+│   └── transparency_note.md       # Algorithm justification + bias management
+├── tests/
+│   └── test_analyzer.py           # Pipeline smoke tests
+├── .env.example
+├── .gitignore
 ├── Dockerfile
 ├── docker-compose.yml
 ├── requirements.txt
-├── transparency_note.md           # Algorithm justification + bias management
-├── architecture.md                # Detailed architecture document
 └── README.md
 ```
 
