@@ -3,541 +3,320 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CipherMind - AI Cyber Shield</title>
+    <title>CipherMind</title>
     <style>
-        /* ============================================
-           DARK CYBERSECURITY THEME
-           Purple/cyan accents on dark background
-           ============================================ */
         :root {
-            --bg-primary: #0a0e1a;
-            --bg-secondary: #111827;
-            --bg-card: #1a1f35;
-            --bg-card-hover: #1f2642;
-            --border: #2a3050;
-            --text-primary: #e2e8f0;
-            --text-secondary: #94a3b8;
-            --accent-purple: #8b5cf6;
-            --accent-cyan: #06b6d4;
-            --accent-green: #10b981;
-            --accent-red: #ef4444;
-            --accent-orange: #f59e0b;
-            --accent-blue: #3b82f6;
+            --bg: #0f1117;
+            --bg2: #1a1d27;
+            --bg3: #22262f;
+            --border: #2e3340;
+            --text: #d1d5db;
+            --text2: #8b919e;
+            --blue: #5b8def;
+            --green: #4ade80;
+            --red: #f87171;
+            --yellow: #fbbf24;
+            --purple: #a78bfa;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); }
 
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-        }
-
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, var(--bg-secondary) 0%, #0f172a 100%);
+        nav {
+            background: var(--bg2);
             border-bottom: 1px solid var(--border);
-            padding: 1rem 2rem;
+            padding: 0 1.5rem;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            height: 48px;
+            gap: 2rem;
         }
-        .header h1 {
-            font-size: 1.5rem;
-            background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .header .subtitle {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-        }
-        .header .badge {
-            background: var(--accent-purple);
-            color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        /* Tabs */
-        .tabs {
+        nav .logo { font-weight: 700; font-size: 1rem; color: #fff; }
+        nav .nav-links { display: flex; gap: 0; height: 100%; }
+        nav .nav-link {
+            padding: 0 1rem;
             display: flex;
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border);
-            padding: 0 2rem;
-        }
-        .tab {
-            padding: 0.8rem 1.5rem;
+            align-items: center;
+            color: var(--text2);
             cursor: pointer;
-            color: var(--text-secondary);
+            font-size: 0.85rem;
             border-bottom: 2px solid transparent;
-            transition: all 0.2s;
-            font-weight: 500;
+            height: 100%;
+            transition: color 0.15s;
         }
-        .tab:hover { color: var(--text-primary); }
-        .tab.active {
-            color: var(--accent-cyan);
-            border-bottom-color: var(--accent-cyan);
-        }
+        nav .nav-link:hover { color: var(--text); }
+        nav .nav-link.active { color: #fff; border-bottom-color: var(--blue); }
 
-        /* Main content */
-        .main { padding: 1.5rem 2rem; max-width: 1400px; margin: 0 auto; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* Cards */
-        .card {
-            background: var(--bg-card);
+        .panel {
+            background: var(--bg2);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        .card h3 {
-            color: var(--accent-cyan);
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-        }
-
-        /* Grid layout */
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-        @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
-
-        /* Buttons */
-        .btn {
-            padding: 0.6rem 1.2rem;
-            border: none;
             border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-        .btn-primary { background: var(--accent-purple); color: white; }
-        .btn-primary:hover { background: #7c3aed; }
-        .btn-success { background: var(--accent-green); color: white; }
-        .btn-success:hover { background: #059669; }
-        .btn-danger { background: var(--accent-red); color: white; }
-        .btn-danger:hover { background: #dc2626; }
-        .btn-outline {
-            background: transparent;
-            color: var(--accent-cyan);
-            border: 1px solid var(--accent-cyan);
-        }
-        .btn-outline:hover { background: rgba(6, 182, 212, 0.1); }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        /* Sample selector */
-        .samples-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 0.8rem;
+            padding: 1.2rem;
             margin-bottom: 1rem;
         }
-        .sample-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.85rem;
-        }
-        .sample-card:hover {
-            border-color: var(--accent-purple);
-            background: var(--bg-card-hover);
-        }
-        .sample-card.selected {
-            border-color: var(--accent-cyan);
-            background: rgba(6, 182, 212, 0.1);
-        }
+        .panel h3 { font-size: 0.9rem; color: var(--text2); margin-bottom: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
 
-        /* Textarea */
-        textarea {
-            width: 100%;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text-primary);
-            padding: 1rem;
-            font-family: 'Cascadia Code', 'Fira Code', monospace;
-            font-size: 0.85rem;
-            resize: vertical;
-            min-height: 150px;
-        }
-        textarea:focus { outline: none; border-color: var(--accent-purple); }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media (max-width: 800px) { .row { grid-template-columns: 1fr; } }
 
-        input[type="text"] {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text-primary);
-            padding: 0.6rem 1rem;
-            width: 100%;
-            font-size: 0.85rem;
-        }
-        input:focus { outline: none; border-color: var(--accent-purple); }
-
-        /* Threat level badges */
-        .threat-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-        .threat-critical { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); border: 1px solid var(--accent-red); }
-        .threat-high { background: rgba(245, 158, 11, 0.2); color: var(--accent-orange); border: 1px solid var(--accent-orange); }
-        .threat-medium { background: rgba(59, 130, 246, 0.2); color: var(--accent-blue); border: 1px solid var(--accent-blue); }
-        .threat-low { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid var(--accent-green); }
-        .threat-safe { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); border: 1px solid var(--accent-green); }
-
-        /* Confidence meter */
-        .confidence-meter {
-            width: 100%;
-            height: 8px;
-            background: var(--bg-secondary);
-            border-radius: 4px;
+        .pipeline-bar {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 1rem;
+            background: var(--bg3);
+            border-radius: 6px;
             overflow: hidden;
-            margin: 0.5rem 0;
         }
-        .confidence-fill {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.8s ease;
+        .pipeline-bar .step {
+            flex: 1;
+            padding: 0.5rem;
+            text-align: center;
+            font-size: 0.72rem;
+            color: var(--text2);
+            background: var(--bg3);
+            transition: all 0.3s;
         }
+        .pipeline-bar .step.active { background: var(--blue); color: #fff; }
+        .pipeline-bar .step.done { background: #1a3a2a; color: var(--green); }
 
-        /* Pipeline visualization */
-        .pipeline {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin: 1rem 0;
-            flex-wrap: wrap;
-        }
-        .pipeline-step {
-            background: var(--bg-secondary);
+        .samples-list { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+        .sample-btn {
+            background: var(--bg3);
             border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 0.5rem 1rem;
+            color: var(--text);
+            padding: 0.45rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
             font-size: 0.8rem;
-            text-align: center;
-            min-width: 120px;
+            transition: border-color 0.15s;
         }
-        .pipeline-step.active {
-            border-color: var(--accent-cyan);
-            color: var(--accent-cyan);
-        }
-        .pipeline-step.done {
-            border-color: var(--accent-green);
-            color: var(--accent-green);
-        }
-        .pipeline-arrow { color: var(--text-secondary); font-size: 1.2rem; }
+        .sample-btn:hover { border-color: var(--blue); }
+        .sample-btn.selected { border-color: var(--blue); background: rgba(91,141,239,0.1); }
 
-        /* Feature list */
-        .feature-item {
-            background: var(--bg-secondary);
-            border-left: 3px solid var(--accent-orange);
-            padding: 0.6rem 1rem;
-            margin: 0.4rem 0;
-            border-radius: 0 6px 6px 0;
-            font-size: 0.85rem;
-        }
-
-        /* RAG match */
-        .rag-match {
-            background: var(--bg-secondary);
-            border-left: 3px solid var(--accent-purple);
-            padding: 0.8rem 1rem;
-            margin: 0.5rem 0;
-            border-radius: 0 6px 6px 0;
-        }
-        .rag-match .match-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.3rem;
-        }
-
-        /* Action cards for remediation */
-        .action-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 0.8rem 0;
-        }
-        .action-card .action-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-        .action-card .action-buttons {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.8rem;
-        }
-        .action-card.approved { border-left: 3px solid var(--accent-green); }
-        .action-card.rejected { border-left: 3px solid var(--accent-red); opacity: 0.7; }
-        .action-card.pending { border-left: 3px solid var(--accent-orange); }
-
-        /* Audit log table */
-        .log-table {
+        label { display: block; font-size: 0.78rem; color: var(--text2); margin-bottom: 0.3rem; }
+        textarea, input[type="text"] {
             width: 100%;
-            border-collapse: collapse;
-            font-size: 0.82rem;
-        }
-        .log-table th {
-            background: var(--bg-secondary);
-            padding: 0.7rem;
-            text-align: left;
-            color: var(--accent-cyan);
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-        }
-        .log-table td {
-            padding: 0.6rem 0.7rem;
-            border-bottom: 1px solid var(--border);
-            vertical-align: top;
-        }
-        .log-table tr:hover { background: var(--bg-card-hover); }
-
-        .actor-badge {
-            padding: 0.15rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        .actor-ai { background: rgba(139, 92, 246, 0.2); color: var(--accent-purple); }
-        .actor-human { background: rgba(6, 182, 212, 0.2); color: var(--accent-cyan); }
-
-        /* Loading spinner */
-        .spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--border);
-            border-top-color: var(--accent-cyan);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Score breakdown */
-        .score-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 1rem;
-            margin: 1rem 0;
-        }
-        .score-box {
-            text-align: center;
-            padding: 1rem;
-            background: var(--bg-secondary);
-            border-radius: 8px;
+            background: var(--bg);
             border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            padding: 0.6rem;
+            font-size: 0.82rem;
+            font-family: inherit;
         }
-        .score-box .score-value {
-            font-size: 2rem;
-            font-weight: 700;
-        }
-        .score-box .score-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin-top: 0.3rem;
-        }
+        textarea { min-height: 140px; resize: vertical; }
+        textarea:focus, input:focus { outline: none; border-color: var(--blue); }
 
-        /* Explanation box */
-        .explanation-box {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(6, 182, 212, 0.1));
-            border: 1px solid var(--accent-purple);
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 1rem 0;
-            line-height: 1.6;
-        }
-
-        .hidden { display: none !important; }
-
-        /* Scrollable log container */
-        .log-container {
-            max-height: 500px;
-            overflow-y: auto;
-            border-radius: 8px;
-        }
-
-        label {
-            display: block;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            margin-bottom: 0.4rem;
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.82rem;
             font-weight: 500;
         }
+        .btn-blue { background: var(--blue); color: #fff; }
+        .btn-blue:hover { opacity: 0.9; }
+        .btn-green { background: var(--green); color: #000; }
+        .btn-red { background: var(--red); color: #000; }
+        .btn-outline { background: none; color: var(--blue); border: 1px solid var(--border); }
+        .btn:disabled { opacity: 0.4; cursor: default; }
+
+        .verdict-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+        .verdict-bar.critical { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3); }
+        .verdict-bar.high { background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); }
+        .verdict-bar.medium { background: rgba(91,141,239,0.1); border: 1px solid rgba(91,141,239,0.3); }
+        .verdict-bar.low, .verdict-bar.safe { background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.3); }
+
+        .tag {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .tag-critical { background: rgba(248,113,113,0.15); color: var(--red); }
+        .tag-high { background: rgba(251,191,36,0.15); color: var(--yellow); }
+        .tag-medium { background: rgba(91,141,239,0.15); color: var(--blue); }
+        .tag-low, .tag-safe { background: rgba(74,222,128,0.15); color: var(--green); }
+
+        .scores { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem; margin: 0.8rem 0; }
+        .score-card { text-align: center; padding: 0.6rem; background: var(--bg); border-radius: 6px; }
+        .score-card .val { font-size: 1.3rem; font-weight: 700; }
+        .score-card .lbl { font-size: 0.68rem; color: var(--text2); margin-top: 2px; }
+
+        .finding {
+            background: var(--bg);
+            padding: 0.5rem 0.7rem;
+            margin: 0.3rem 0;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            border-left: 3px solid var(--yellow);
+        }
+        .explanation-block {
+            background: var(--bg);
+            padding: 0.8rem;
+            border-radius: 6px;
+            font-size: 0.83rem;
+            line-height: 1.5;
+            margin: 0.5rem 0;
+        }
+        .rag-item {
+            background: var(--bg);
+            padding: 0.6rem;
+            margin: 0.3rem 0;
+            border-radius: 4px;
+            border-left: 3px solid var(--purple);
+        }
+        .ml-word {
+            display: inline-block;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            margin: 0.15rem;
+            border: 1px solid;
+        }
+
+        .action-item {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+        }
+        .action-item.approved { border-left: 3px solid var(--green); }
+        .action-item.rejected { border-left: 3px solid var(--red); opacity: 0.7; }
+        .action-item.pending { border-left: 3px solid var(--yellow); }
+        .action-item .btns { display: flex; gap: 0.4rem; margin-top: 0.6rem; }
+
+        .log-tbl { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+        .log-tbl th { text-align: left; padding: 0.5rem; color: var(--text2); border-bottom: 1px solid var(--border); font-weight: 600; }
+        .log-tbl td { padding: 0.5rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+        .log-tbl tr:hover { background: var(--bg3); }
+        .actor-tag { font-size: 0.7rem; padding: 0.1rem 0.4rem; border-radius: 3px; font-weight: 600; }
+        .actor-ai { background: rgba(167,139,250,0.15); color: var(--purple); }
+        .actor-human { background: rgba(91,141,239,0.15); color: var(--blue); }
+
+        .spinner { width: 24px; height: 24px; border: 2px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.6s linear infinite; margin: 0 auto; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .hidden { display: none !important; }
+        .log-scroll { max-height: 450px; overflow-y: auto; }
+        .meta-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+        .meta-tag { font-size: 0.7rem; padding: 0.2rem 0.5rem; background: var(--bg3); border-radius: 3px; color: var(--text2); }
     </style>
 </head>
 <body>
 
-<!-- ================================ HEADER ================================ -->
-<div class="header">
-    <div>
-        <h1>CipherMind</h1>
-        <div class="subtitle">AI Cyber Shield for Tunisian Cyberspace</div>
+<nav>
+    <span class="logo">CipherMind</span>
+    <div class="nav-links">
+        <div class="nav-link active" onclick="switchTab('analysis')">Analysis</div>
+        <div class="nav-link" onclick="switchTab('remediation')">Remediation</div>
+        <div class="nav-link" onclick="switchTab('audit')">Audit Logs</div>
     </div>
-    <div style="display: flex; align-items: center; gap: 1rem;">
-        <span class="badge">Human-in-the-Loop</span>
-        <span class="badge" style="background: var(--accent-cyan);">Securinets FST Hackathon</span>
-    </div>
-</div>
+</nav>
 
-<!-- ================================ TABS ================================ -->
-<div class="tabs">
-    <div class="tab active" onclick="switchTab('analysis')">Phishing Analysis (XAI)</div>
-    <div class="tab" onclick="switchTab('remediation')">Remediation (HITL)</div>
-    <div class="tab" onclick="switchTab('audit')">Audit Logs</div>
-</div>
+<div class="container">
 
-<!-- ================================ MAIN CONTENT ================================ -->
-<div class="main">
-
-    <!-- ================ TAB 1: ANALYSIS ================ -->
+    <!-- ANALYSIS TAB -->
     <div id="tab-analysis" class="tab-content active">
-        <!-- Pipeline visualization -->
-        <div class="card">
-            <h3>Analysis Pipeline</h3>
-            <div class="pipeline">
-                <div class="pipeline-step" id="step-input">Data Source</div>
-                <span class="pipeline-arrow">&rarr;</span>
-                <div class="pipeline-step" id="step-etl">ETL Pipeline</div>
-                <span class="pipeline-arrow">&rarr;</span>
-                <div class="pipeline-step" id="step-rules">Rules + ML</div>
-                <span class="pipeline-arrow">&rarr;</span>
-                <div class="pipeline-step" id="step-rag">RAG Retrieval</div>
-                <span class="pipeline-arrow">&rarr;</span>
-                <div class="pipeline-step" id="step-llm">LLM Analysis</div>
-                <span class="pipeline-arrow">&rarr;</span>
-                <div class="pipeline-step" id="step-verdict">Threat Aggregation</div>
-            </div>
+        <div class="pipeline-bar">
+            <div class="step" id="step-input">Input</div>
+            <div class="step" id="step-etl">ETL</div>
+            <div class="step" id="step-rules">Rules</div>
+            <div class="step" id="step-ml">ML</div>
+            <div class="step" id="step-rag">RAG</div>
+            <div class="step" id="step-llm">LLM</div>
+            <div class="step" id="step-verdict">Verdict</div>
         </div>
 
-        <div class="grid-2">
-            <!-- Left: Input -->
+        <div class="row">
             <div>
-                <div class="card">
-                    <h3>Select Demo Sample or Paste Email</h3>
-                    <div class="samples-grid" id="samples-container">
-                        <div style="color: var(--text-secondary);">Loading samples...</div>
+                <div class="panel">
+                    <h3>Input</h3>
+                    <div class="samples-list" id="samples-container">Loading...</div>
+                    <div style="margin-bottom:0.6rem;">
+                        <label>Sender</label>
+                        <input type="text" id="sender-input" placeholder="e.g. security@biat-secure.com">
                     </div>
-                    <div style="margin-top: 1rem;">
-                        <label>Sender Email</label>
-                        <input type="text" id="sender-input" placeholder="e.g., security@biat-secure.com">
+                    <div style="margin-bottom:0.6rem;">
+                        <label>Email content</label>
+                        <textarea id="email-input" placeholder="Paste the email text here..."></textarea>
                     </div>
-                    <div style="margin-top: 1rem;">
-                        <label>Email Content</label>
-                        <textarea id="email-input" placeholder="Paste email content here..."></textarea>
-                    </div>
-                    <div style="margin-top: 1rem;">
-                        <button class="btn btn-primary" id="analyze-btn" onclick="runAnalysis()">
-                            Analyze Email
-                        </button>
-                    </div>
+                    <button class="btn btn-blue" id="analyze-btn" onclick="runAnalysis()">Analyze</button>
                 </div>
             </div>
-
-            <!-- Right: Results -->
             <div>
-                <div class="card" id="results-card" style="display:none;">
-                    <h3>Analysis Results</h3>
-
-                    <!-- Final Verdict -->
-                    <div id="verdict-section"></div>
-
-                    <!-- Score Breakdown -->
-                    <div id="score-section"></div>
-
-                    <!-- AI Explanation (XAI) -->
-                    <div id="explanation-section"></div>
-
-                    <!-- Rule-based features -->
-                    <div id="features-section"></div>
-
-                    <!-- RAG matches -->
-                    <div id="rag-section"></div>
-
-                    <!-- Remediation button -->
-                    <div id="remediate-section" class="hidden" style="margin-top: 1rem;">
-                        <button class="btn btn-danger" onclick="generateRemediation()">
-                            Generate Remediation Actions
-                        </button>
+                <div class="panel hidden" id="loading-card">
+                    <div style="text-align:center;padding:2rem;">
+                        <div class="spinner" style="width:32px;height:32px;"></div>
+                        <p style="margin-top:0.8rem;color:var(--text2);font-size:0.85rem;" id="loading-text">Analyzing...</p>
                     </div>
                 </div>
-
-                <!-- Loading state -->
-                <div class="card hidden" id="loading-card">
-                    <div style="text-align:center; padding: 2rem;">
-                        <div class="spinner" style="width:40px;height:40px;border-width:3px;margin:0 auto;"></div>
-                        <p style="margin-top:1rem;color:var(--text-secondary);" id="loading-text">Running analysis pipeline...</p>
+                <div class="panel" id="results-card" style="display:none;">
+                    <h3>Results</h3>
+                    <div id="verdict-section"></div>
+                    <div id="score-section"></div>
+                    <div id="ml-section"></div>
+                    <div id="explanation-section"></div>
+                    <div id="features-section"></div>
+                    <div id="rag-section"></div>
+                    <div id="remediate-section" class="hidden" style="margin-top:0.8rem;">
+                        <button class="btn btn-red" onclick="generateRemediation()">Generate Remediation</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ================ TAB 2: REMEDIATION ================ -->
+    <!-- REMEDIATION TAB -->
     <div id="tab-remediation" class="tab-content">
-        <div class="card">
-            <h3>Remediation Actions - Human-in-the-Loop Control</h3>
-            <p style="color: var(--text-secondary); margin-bottom: 1rem;">
-                The AI proposes actions, but YOU decide. Every action requires your explicit approval before execution.
-                This ensures human control over all critical security decisions.
+        <div class="panel">
+            <h3>Remediation Actions</h3>
+            <p style="color:var(--text2);font-size:0.82rem;margin-bottom:0.8rem;">
+                AI proposes actions. You approve or reject each one before anything happens.
             </p>
-            <div id="feedback-section" class="hidden" style="margin-bottom:1rem;padding:1rem;background:var(--bg-secondary);border-radius:8px;border:1px solid var(--border);">
-                <strong style="color:var(--accent-cyan);">Was the AI's analysis correct?</strong>
-                <p style="font-size:0.85rem;color:var(--text-secondary);margin:0.5rem 0;">Your feedback helps the system learn and improve over time (Adaptive Learning).</p>
-                <div style="display:flex;gap:0.5rem;">
-                    <button class="btn btn-success" onclick="submitFeedback(true)">Yes, AI was correct</button>
-                    <button class="btn btn-danger" onclick="submitFeedback(false)">No, AI was wrong</button>
+            <div id="feedback-section" class="hidden" style="margin-bottom:0.8rem;padding:0.8rem;background:var(--bg);border-radius:6px;">
+                <p style="font-size:0.82rem;margin-bottom:0.5rem;">Was the AI correct?</p>
+                <div style="display:flex;gap:0.4rem;">
+                    <button class="btn btn-green" onclick="submitFeedback(true)">Yes</button>
+                    <button class="btn btn-red" onclick="submitFeedback(false)">No</button>
                 </div>
-                <div id="feedback-result" style="margin-top:0.5rem;font-size:0.85rem;"></div>
+                <div id="feedback-result" style="margin-top:0.4rem;font-size:0.8rem;"></div>
             </div>
             <div id="remediation-container">
-                <p style="color: var(--text-secondary); text-align: center; padding: 2rem;">
-                    Run a phishing analysis first, then generate remediation actions.
+                <p style="color:var(--text2);text-align:center;padding:2rem;font-size:0.85rem;">
+                    Run an analysis first, then generate remediation actions.
                 </p>
             </div>
         </div>
     </div>
 
-    <!-- ================ TAB 3: AUDIT LOGS ================ -->
+    <!-- AUDIT TAB -->
     <div id="tab-audit" class="tab-content">
-        <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <h3>Audit Trail - Complete Traceability</h3>
-                <button class="btn btn-outline" onclick="loadAuditLogs()">Refresh Logs</button>
+        <div class="panel">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.8rem;">
+                <h3 style="margin:0;">Audit Trail</h3>
+                <button class="btn btn-outline" onclick="loadAuditLogs()">Refresh</button>
             </div>
-            <p style="color: var(--text-secondary); margin-bottom: 1rem;">
-                Every AI decision and human action is recorded with timestamps for full transparency and accountability.
-            </p>
-            <div class="log-container">
-                <table class="log-table">
+            <div class="log-scroll">
+                <table class="log-tbl">
                     <thead>
-                        <tr>
-                            <th>Timestamp</th>
-                            <th>Analysis</th>
-                            <th>Actor</th>
-                            <th>Event</th>
-                            <th>Details</th>
-                        </tr>
+                        <tr><th>Time</th><th>ID</th><th>Actor</th><th>Event</th><th>Details</th></tr>
                     </thead>
                     <tbody id="logs-body">
-                        <tr><td colspan="5" style="text-align:center;color:var(--text-secondary);padding:2rem;">No logs yet</td></tr>
+                        <tr><td colspan="5" style="text-align:center;color:var(--text2);padding:2rem;">No logs yet</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -546,414 +325,289 @@
 
 </div>
 
-<!-- ================================ JAVASCRIPT ================================ -->
 <script>
-    // Global state
-    let currentAnalysisId = null;
-    let currentAnalysisResult = null;
+let currentAnalysisId = null;
+let currentAnalysisResult = null;
 
-    // ============================================
-    // TAB SWITCHING
-    // ============================================
-    function switchTab(tabName) {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        document.querySelector(`.tab:nth-child(${tabName === 'analysis' ? 1 : tabName === 'remediation' ? 2 : 3})`).classList.add('active');
-        document.getElementById(`tab-${tabName}`).classList.add('active');
+function switchTab(name) {
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    const idx = {analysis:0, remediation:1, audit:2}[name];
+    document.querySelectorAll('.nav-link')[idx].classList.add('active');
+    document.getElementById('tab-' + name).classList.add('active');
+    if (name === 'audit') loadAuditLogs();
+}
 
-        if (tabName === 'audit') loadAuditLogs();
-    }
-
-    // ============================================
-    // LOAD DEMO SAMPLES
-    // ============================================
-    async function loadSamples() {
-        try {
-            const res = await fetch('/api/samples');
-            const data = await res.json();
-            const container = document.getElementById('samples-container');
-            container.innerHTML = '';
-
-            data.samples.forEach(sample => {
-                const card = document.createElement('div');
-                card.className = 'sample-card';
-                card.textContent = sample.name;
-                card.onclick = () => selectSample(sample, card);
-                container.appendChild(card);
-            });
-        } catch (err) {
-            console.error('Failed to load samples:', err);
-        }
-    }
-
-    function selectSample(sample, cardEl) {
-        document.querySelectorAll('.sample-card').forEach(c => c.classList.remove('selected'));
-        cardEl.classList.add('selected');
-        document.getElementById('email-input').value = sample.content;
-        document.getElementById('sender-input').value = sample.sender;
-    }
-
-    // ============================================
-    // RUN ANALYSIS (Main flow)
-    // ============================================
-    async function runAnalysis() {
-        const content = document.getElementById('email-input').value.trim();
-        const sender = document.getElementById('sender-input').value.trim();
-
-        if (!content) { alert('Please enter email content to analyze.'); return; }
-
-        // Show loading, hide results
-        document.getElementById('results-card').style.display = 'none';
-        document.getElementById('loading-card').classList.remove('hidden');
-        document.getElementById('analyze-btn').disabled = true;
-
-        // Animate pipeline steps
-        resetPipeline();
-        animatePipelineStep('step-input', 0);
-        animatePipelineStep('step-etl', 400);
-        animatePipelineStep('step-rules', 900);
-        animatePipelineStep('step-rag', 1500);
-        animatePipelineStep('step-llm', 2500);
-
-        try {
-            const res = await fetch('/api/analyze', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email_content: content, sender: sender })
-            });
-            const result = await res.json();
-            currentAnalysisId = result.analysis_id;
-            currentAnalysisResult = result;
-
-            // Mark pipeline complete
-            animatePipelineStep('step-verdict', 0);
-
-            // Display results
-            displayResults(result);
-        } catch (err) {
-            alert('Analysis failed: ' + err.message);
-        } finally {
-            document.getElementById('loading-card').classList.add('hidden');
-            document.getElementById('analyze-btn').disabled = false;
-        }
-    }
-
-    function resetPipeline() {
-        document.querySelectorAll('.pipeline-step').forEach(s => {
-            s.classList.remove('active', 'done');
+async function loadSamples() {
+    try {
+        const res = await fetch('/api/samples');
+        const data = await res.json();
+        const el = document.getElementById('samples-container');
+        el.innerHTML = '';
+        data.samples.forEach(s => {
+            const btn = document.createElement('div');
+            btn.className = 'sample-btn';
+            btn.textContent = s.name;
+            btn.onclick = () => {
+                document.querySelectorAll('.sample-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                document.getElementById('email-input').value = s.content;
+                document.getElementById('sender-input').value = s.sender;
+            };
+            el.appendChild(btn);
         });
-    }
+    } catch (e) { console.error(e); }
+}
 
-    function animatePipelineStep(stepId, delay) {
-        setTimeout(() => {
-            // Mark previous steps as done
-            const steps = ['step-input', 'step-etl', 'step-rules', 'step-rag', 'step-llm', 'step-verdict'];
-            const idx = steps.indexOf(stepId);
-            steps.forEach((s, i) => {
-                if (i < idx) document.getElementById(s).classList.replace('active', 'done') || document.getElementById(s).classList.add('done');
-            });
-            document.getElementById(stepId).classList.add('active');
-        }, delay);
-    }
-
-    // ============================================
-    // DISPLAY ANALYSIS RESULTS
-    // ============================================
-    function displayResults(result) {
-        const v = result.final_verdict;
-        const p = result.pipeline_results;
-
-        // Verdict
-        document.getElementById('verdict-section').innerHTML = `
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-                <div>
-                    <span class="threat-badge threat-${v.threat_level}">${v.threat_level}</span>
-                    <span style="margin-left:0.5rem;font-weight:600;">${v.is_phishing ? 'PHISHING DETECTED' : 'APPEARS LEGITIMATE'}</span>
-                </div>
-                <span style="font-size:0.8rem;color:var(--text-secondary);">ID: ${result.analysis_id}</span>
-            </div>
-            <div class="confidence-meter">
-                <div class="confidence-fill" style="width:${v.confidence * 100}%;background:${getColorForScore(v.confidence)};"></div>
-            </div>
-            <div style="text-align:right;font-size:0.8rem;color:var(--text-secondary);">Confidence: ${(v.confidence * 100).toFixed(1)}%</div>
-        `;
-
-        // Score breakdown - now with 4 boxes: Rules, ML, LLM, Final
-        const mlAvail = p.ml_model && p.ml_model.available;
-        document.getElementById('score-section').innerHTML = `
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.8rem;margin:1rem 0;">
-                <div class="score-box">
-                    <div class="score-value" style="color:${getColorForScore(p.layer1_rules.score/100)};font-size:1.6rem;">${p.layer1_rules.score}</div>
-                    <div class="score-label">Rules (0-100)</div>
-                </div>
-                <div class="score-box">
-                    <div class="score-value" style="color:${mlAvail ? getColorForScore(p.ml_model.confidence) : 'var(--text-secondary)'};font-size:1.6rem;">${mlAvail ? (p.ml_model.confidence * 100).toFixed(0) + '%' : 'N/A'}</div>
-                    <div class="score-label">ML Model</div>
-                </div>
-                <div class="score-box">
-                    <div class="score-value" style="color:${getColorForScore(p.layer3_llm.confidence || 0)};font-size:1.6rem;">${((p.layer3_llm.confidence || 0) * 100).toFixed(0)}%</div>
-                    <div class="score-label">LLM (Gemini)</div>
-                </div>
-                <div class="score-box" style="border:1px solid var(--accent-purple);">
-                    <div class="score-value" style="color:${getColorForScore(p.layer4_verdict.final_score)};font-size:1.6rem;">${(p.layer4_verdict.final_score * 100).toFixed(1)}%</div>
-                    <div class="score-label">Final Score</div>
-                </div>
-            </div>
-            <div style="text-align:center;font-size:0.75rem;color:var(--text-secondary);">
-                Formula: ${p.layer4_verdict.score_breakdown.formula}
-            </div>
-            ${p.etl ? `<div style="display:flex;gap:1rem;margin-top:0.8rem;flex-wrap:wrap;">
-                <span style="font-size:0.75rem;color:var(--text-secondary);background:var(--bg-secondary);padding:0.3rem 0.6rem;border-radius:4px;">Language: ${p.etl.language}</span>
-                <span style="font-size:0.75rem;color:var(--text-secondary);background:var(--bg-secondary);padding:0.3rem 0.6rem;border-radius:4px;">Words: ${p.etl.word_count}</span>
-                <span style="font-size:0.75rem;color:var(--text-secondary);background:var(--bg-secondary);padding:0.3rem 0.6rem;border-radius:4px;">URLs: ${p.etl.urls_found}</span>
-                ${p.etl.entities && p.etl.entities.monetary_amounts && p.etl.entities.monetary_amounts.length > 0 ? `<span style="font-size:0.75rem;color:var(--accent-orange);background:var(--bg-secondary);padding:0.3rem 0.6rem;border-radius:4px;">Money mentioned: ${p.etl.entities.monetary_amounts.join(', ')} DT</span>` : ''}
-            </div>` : ''}
-        `;
-
-        // ML Model Features (XAI for ML)
-        let mlHtml = '';
-        if (mlAvail && p.ml_model.top_features && p.ml_model.top_features.length > 0) {
-            mlHtml = '<h4 style="color:var(--accent-blue);margin:1rem 0 0.5rem;">ML Model Key Words</h4>';
-            mlHtml += '<div style="display:flex;flex-wrap:wrap;gap:0.4rem;">';
-            p.ml_model.top_features.forEach(f => {
-                const color = f.direction === 'phishing' ? 'var(--accent-red)' : 'var(--accent-green)';
-                mlHtml += `<span style="font-size:0.78rem;padding:0.25rem 0.6rem;border-radius:4px;border:1px solid ${color};color:${color};background:rgba(0,0,0,0.2);">"${f.word}" (${f.weight > 0 ? '+' : ''}${f.weight})</span>`;
-            });
-            mlHtml += '</div>';
-        }
-        document.getElementById('features-section').insertAdjacentHTML('beforebegin', mlHtml);
-
-        // Explanation (XAI)
-        document.getElementById('explanation-section').innerHTML = `
-            <h4 style="color:var(--accent-purple);margin:1rem 0 0.5rem;">AI Explanation (XAI)</h4>
-            <div class="explanation-box">
-                ${v.explanation}
-                ${v.targeted_institution ? `<br><br><strong>Targeted Institution:</strong> ${v.targeted_institution}` : ''}
-                ${v.risk_to_citizen ? `<br><strong>Risk to Citizen:</strong> ${v.risk_to_citizen}` : ''}
-                ${v.attack_techniques && v.attack_techniques.length > 0 ? `<br><strong>Techniques:</strong> ${v.attack_techniques.join(', ')}` : ''}
-            </div>
-        `;
-
-        // Features (Layer 1)
-        let featuresHtml = '<h4 style="color:var(--accent-orange);margin:1rem 0 0.5rem;">Rule-Based Features (Layer 1)</h4>';
-        if (p.layer1_rules.explanations.length > 0) {
-            p.layer1_rules.explanations.forEach(exp => {
-                featuresHtml += `<div class="feature-item">${exp}</div>`;
-            });
-        } else {
-            featuresHtml += '<div style="color:var(--text-secondary);font-size:0.85rem;padding:0.5rem;">No suspicious features detected by rules.</div>';
-        }
-        document.getElementById('features-section').innerHTML = featuresHtml;
-
-        // RAG matches (Layer 2)
-        let ragHtml = '<h4 style="color:var(--accent-purple);margin:1rem 0 0.5rem;">Similar Known Attacks (Layer 2 - RAG)</h4>';
-        if (p.layer2_rag.matches.length > 0) {
-            p.layer2_rag.matches.forEach(m => {
-                ragHtml += `
-                    <div class="rag-match">
-                        <div class="match-header">
-                            <strong>${m.category}</strong>
-                            <span class="threat-badge threat-${m.severity}">${m.severity}</span>
-                        </div>
-                        <div style="font-size:0.85rem;color:var(--text-secondary);">
-                            Target: ${m.target} | Similarity: ${m.similarity_distance !== null ? m.similarity_distance.toFixed(3) : 'N/A'}
-                        </div>
-                    </div>
-                `;
-            });
-        } else {
-            ragHtml += '<div style="color:var(--text-secondary);font-size:0.85rem;padding:0.5rem;">No similar patterns found in knowledge base.</div>';
-        }
-        document.getElementById('rag-section').innerHTML = ragHtml;
-
-        // Show remediate button if phishing
-        if (v.is_phishing) {
-            document.getElementById('remediate-section').classList.remove('hidden');
-        } else {
-            document.getElementById('remediate-section').classList.add('hidden');
-        }
-
-        document.getElementById('results-card').style.display = 'block';
-    }
-
-    function getColorForScore(score) {
-        if (score >= 0.8) return 'var(--accent-red)';
-        if (score >= 0.6) return 'var(--accent-orange)';
-        if (score >= 0.4) return 'var(--accent-blue)';
-        return 'var(--accent-green)';
-    }
-
-    // ============================================
-    // REMEDIATION (Human-in-the-Loop)
-    // ============================================
-    async function generateRemediation() {
-        if (!currentAnalysisId) return;
-
-        switchTab('remediation');
-        const container = document.getElementById('remediation-container');
-        container.innerHTML = '<div style="text-align:center;padding:2rem;"><div class="spinner" style="width:30px;height:30px;margin:0 auto;"></div><p style="margin-top:1rem;color:var(--text-secondary);">AI is generating remediation actions...</p></div>';
-
-        try {
-            const res = await fetch(`/api/remediate/${currentAnalysisId}`, { method: 'POST' });
-            const data = await res.json();
-            document.getElementById('feedback-section').classList.remove('hidden');
-            displayRemediation(data);
-        } catch (err) {
-            container.innerHTML = `<p style="color:var(--accent-red);">Error: ${err.message}</p>`;
-        }
-    }
-
-    function displayRemediation(data) {
-        const container = document.getElementById('remediation-container');
-
-        let html = `
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-                <div>
-                    <span class="threat-badge threat-${data.threat_level}">${data.threat_level}</span>
-                    <span style="margin-left:0.5rem;color:var(--text-secondary);font-size:0.85rem;">
-                        Status: ${data.status} | ${data.actions.length} actions proposed
-                    </span>
-                </div>
-            </div>
-        `;
-
-        data.actions.forEach(action => {
-            const statusClass = action.status === 'approved' ? 'approved' : action.status === 'rejected' ? 'rejected' : 'pending';
-            html += `
-                <div class="action-card ${statusClass}" id="action-${action.action_id}">
-                    <div class="action-header">
-                        <div>
-                            <strong>${action.title}</strong>
-                            <span class="threat-badge threat-${action.severity}" style="margin-left:0.5rem;">${action.severity}</span>
-                        </div>
-                        <span style="font-size:0.75rem;color:var(--text-secondary);">${action.type}</span>
-                    </div>
-                    <p style="font-size:0.85rem;color:var(--text-secondary);margin:0.5rem 0;">${action.description}</p>
-                    ${action.status === 'pending_approval' ? `
-                        <div class="action-buttons">
-                            <button class="btn btn-success" onclick="approveAction('${currentAnalysisId}', '${action.action_id}')">
-                                Approve
-                            </button>
-                            <button class="btn btn-danger" onclick="rejectAction('${currentAnalysisId}', '${action.action_id}')">
-                                Reject
-                            </button>
-                        </div>
-                    ` : `
-                        <div style="font-size:0.8rem;margin-top:0.5rem;color:${action.status === 'approved' ? 'var(--accent-green)' : 'var(--accent-red)'};">
-                            ${action.status === 'approved' ? 'Approved' : 'Rejected'} by ${action.approved_by || 'operator'} at ${action.approved_at ? new Date(action.approved_at).toLocaleTimeString() : ''}
-                        </div>
-                    `}
-                </div>
-            `;
+function resetPipeline() {
+    document.querySelectorAll('.pipeline-bar .step').forEach(s => s.classList.remove('active','done'));
+}
+function setPipelineStep(id, delay) {
+    setTimeout(() => {
+        const steps = ['step-input','step-etl','step-rules','step-ml','step-rag','step-llm','step-verdict'];
+        const i = steps.indexOf(id);
+        steps.forEach((s,j) => {
+            const el = document.getElementById(s);
+            if (j < i) { el.classList.remove('active'); el.classList.add('done'); }
         });
+        document.getElementById(id).classList.add('active');
+    }, delay);
+}
 
-        container.innerHTML = html;
+async function runAnalysis() {
+    const content = document.getElementById('email-input').value.trim();
+    const sender = document.getElementById('sender-input').value.trim();
+    if (!content) { alert('Enter email content first'); return; }
+
+    document.getElementById('results-card').style.display = 'none';
+    document.getElementById('loading-card').classList.remove('hidden');
+    document.getElementById('analyze-btn').disabled = true;
+    document.getElementById('ml-section').innerHTML = '';
+
+    resetPipeline();
+    setPipelineStep('step-input', 0);
+    setPipelineStep('step-etl', 300);
+    setPipelineStep('step-rules', 600);
+    setPipelineStep('step-ml', 900);
+    setPipelineStep('step-rag', 1200);
+    setPipelineStep('step-llm', 2000);
+
+    try {
+        const res = await fetch('/api/analyze', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({email_content: content, sender: sender})
+        });
+        const result = await res.json();
+        currentAnalysisId = result.analysis_id;
+        currentAnalysisResult = result;
+        setPipelineStep('step-verdict', 0);
+        showResults(result);
+    } catch (e) {
+        alert('Analysis failed: ' + e.message);
+    } finally {
+        document.getElementById('loading-card').classList.add('hidden');
+        document.getElementById('analyze-btn').disabled = false;
+    }
+}
+
+function scoreColor(s) {
+    if (s >= 0.8) return 'var(--red)';
+    if (s >= 0.6) return 'var(--yellow)';
+    if (s >= 0.4) return 'var(--blue)';
+    return 'var(--green)';
+}
+
+function showResults(r) {
+    const v = r.final_verdict;
+    const p = r.pipeline_results;
+
+    // verdict
+    document.getElementById('verdict-section').innerHTML = `
+        <div class="verdict-bar ${v.threat_level}">
+            <span class="tag tag-${v.threat_level}">${v.threat_level}</span>
+            <span style="font-weight:600;">${v.is_phishing ? 'Phishing detected' : 'Looks legitimate'}</span>
+            <span style="margin-left:auto;font-size:0.8rem;color:var(--text2);">${(v.confidence*100).toFixed(1)}% confidence</span>
+        </div>
+    `;
+
+    // scores
+    const ml = p.ml_model || {};
+    document.getElementById('score-section').innerHTML = `
+        <div class="scores">
+            <div class="score-card"><div class="val" style="color:${scoreColor(p.layer1_rules.score/100)}">${p.layer1_rules.score}</div><div class="lbl">Rules</div></div>
+            <div class="score-card"><div class="val" style="color:${ml.available ? scoreColor(ml.confidence) : 'var(--text2)'}">${ml.available ? (ml.confidence*100).toFixed(0)+'%' : '-'}</div><div class="lbl">ML</div></div>
+            <div class="score-card"><div class="val" style="color:${scoreColor(p.layer3_llm.confidence||0)}">${((p.layer3_llm.confidence||0)*100).toFixed(0)}%</div><div class="lbl">LLM</div></div>
+            <div class="score-card" style="border:1px solid var(--blue);"><div class="val" style="color:${scoreColor(p.layer4_verdict.final_score)}">${(p.layer4_verdict.final_score*100).toFixed(1)}%</div><div class="lbl">Final</div></div>
+        </div>
+        <div style="text-align:center;font-size:0.7rem;color:var(--text2);">${p.layer4_verdict.score_breakdown.formula}</div>
+        ${p.etl ? `<div class="meta-tags">
+            <span class="meta-tag">lang: ${p.etl.language}</span>
+            <span class="meta-tag">${p.etl.word_count} words</span>
+            <span class="meta-tag">${p.etl.urls_found} URLs</span>
+            ${p.etl.entities && p.etl.entities.monetary_amounts && p.etl.entities.monetary_amounts.length ? `<span class="meta-tag" style="color:var(--yellow);">${p.etl.entities.monetary_amounts.join(', ')} DT</span>` : ''}
+        </div>` : ''}
+    `;
+
+    // ml features
+    if (ml.available && ml.top_features && ml.top_features.length) {
+        let h = '<div style="margin:0.6rem 0;"><span style="font-size:0.78rem;color:var(--text2);">ML key words:</span> ';
+        ml.top_features.forEach(f => {
+            const c = f.direction === 'phishing' ? 'var(--red)' : 'var(--green)';
+            h += `<span class="ml-word" style="border-color:${c};color:${c};">${f.word} ${f.weight>0?'+':''}${f.weight}</span>`;
+        });
+        h += '</div>';
+        document.getElementById('ml-section').innerHTML = h;
     }
 
-    async function approveAction(analysisId, actionId) {
-        try {
-            const res = await fetch(`/api/actions/${analysisId}/approve/${actionId}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ operator: 'human_operator' })
-            });
-            const data = await res.json();
-            if (data.success) {
-                // Refresh remediation display
-                const remRes = await fetch(`/api/remediation/${analysisId}`);
-                const remData = await remRes.json();
-                displayRemediation(remData);
-            } else {
-                alert(data.error || 'Failed to approve action');
-            }
-        } catch (err) {
-            alert('Error: ' + err.message);
+    // explanation
+    document.getElementById('explanation-section').innerHTML = `
+        <div class="explanation-block">
+            ${v.explanation}
+            ${v.targeted_institution ? `<br><br><strong>Target:</strong> ${v.targeted_institution}` : ''}
+            ${v.risk_to_citizen ? `<br><strong>Risk:</strong> ${v.risk_to_citizen}` : ''}
+            ${v.attack_techniques && v.attack_techniques.length ? `<br><strong>Techniques:</strong> ${v.attack_techniques.join(', ')}` : ''}
+        </div>
+    `;
+
+    // rules
+    let fh = '';
+    if (p.layer1_rules.explanations.length) {
+        p.layer1_rules.explanations.forEach(e => { fh += `<div class="finding">${e}</div>`; });
+    } else {
+        fh = '<p style="color:var(--text2);font-size:0.82rem;">No rule-based findings.</p>';
+    }
+    document.getElementById('features-section').innerHTML = fh;
+
+    // rag
+    let rh = '';
+    if (p.layer2_rag.matches.length) {
+        p.layer2_rag.matches.forEach(m => {
+            rh += `<div class="rag-item">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <strong style="font-size:0.82rem;">${m.category}</strong>
+                    <span class="tag tag-${m.severity}">${m.severity}</span>
+                </div>
+                <div style="font-size:0.78rem;color:var(--text2);">Target: ${m.target} &middot; distance: ${m.similarity_distance !== null ? m.similarity_distance.toFixed(3) : '-'}</div>
+            </div>`;
+        });
+    } else {
+        rh = '<p style="color:var(--text2);font-size:0.82rem;">No matching patterns in knowledge base.</p>';
+    }
+    document.getElementById('rag-section').innerHTML = rh;
+
+    document.getElementById('remediate-section').classList.toggle('hidden', !v.is_phishing);
+    document.getElementById('results-card').style.display = 'block';
+}
+
+async function generateRemediation() {
+    if (!currentAnalysisId) return;
+    switchTab('remediation');
+    const el = document.getElementById('remediation-container');
+    el.innerHTML = '<div style="text-align:center;padding:2rem;"><div class="spinner"></div><p style="margin-top:0.6rem;color:var(--text2);font-size:0.82rem;">Generating actions...</p></div>';
+
+    try {
+        const res = await fetch(`/api/remediate/${currentAnalysisId}`, {method:'POST'});
+        const data = await res.json();
+        document.getElementById('feedback-section').classList.remove('hidden');
+        showRemediation(data);
+    } catch (e) {
+        el.innerHTML = `<p style="color:var(--red);">${e.message}</p>`;
+    }
+}
+
+function showRemediation(data) {
+    const el = document.getElementById('remediation-container');
+    let html = `<div style="margin-bottom:0.6rem;">
+        <span class="tag tag-${data.threat_level}">${data.threat_level}</span>
+        <span style="margin-left:0.5rem;font-size:0.8rem;color:var(--text2);">${data.status} &middot; ${data.actions.length} actions</span>
+    </div>`;
+
+    data.actions.forEach(a => {
+        const cls = a.status === 'approved' ? 'approved' : a.status === 'rejected' ? 'rejected' : 'pending';
+        html += `<div class="action-item ${cls}" id="action-${a.action_id}">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <strong style="font-size:0.85rem;">${a.title}</strong>
+                <span class="tag tag-${a.severity}">${a.severity}</span>
+            </div>
+            <p style="font-size:0.8rem;color:var(--text2);margin:0.3rem 0;">${a.description}</p>
+            ${a.status === 'pending_approval' ? `
+                <div class="btns">
+                    <button class="btn btn-green" onclick="approveAction('${currentAnalysisId}','${a.action_id}')">Approve</button>
+                    <button class="btn btn-red" onclick="rejectAction('${currentAnalysisId}','${a.action_id}')">Reject</button>
+                </div>
+            ` : `<div style="font-size:0.75rem;color:${a.status==='approved'?'var(--green)':'var(--red)'};">
+                ${a.status} by ${a.approved_by||'operator'} at ${a.approved_at ? new Date(a.approved_at).toLocaleTimeString() : ''}
+            </div>`}
+        </div>`;
+    });
+    el.innerHTML = html;
+}
+
+async function approveAction(aid, actId) {
+    try {
+        const res = await fetch(`/api/actions/${aid}/approve/${actId}`, {
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({operator:'human_operator'})
+        });
+        const d = await res.json();
+        if (d.success) { const r = await fetch(`/api/remediation/${aid}`); showRemediation(await r.json()); }
+        else alert(d.error);
+    } catch (e) { alert(e.message); }
+}
+
+async function rejectAction(aid, actId) {
+    const reason = prompt('Reason for rejection (optional):') || '';
+    try {
+        const res = await fetch(`/api/actions/${aid}/reject/${actId}`, {
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({operator:'human_operator', reason})
+        });
+        const d = await res.json();
+        if (d.success) { const r = await fetch(`/api/remediation/${aid}`); showRemediation(await r.json()); }
+        else alert(d.error);
+    } catch (e) { alert(e.message); }
+}
+
+async function submitFeedback(agreed) {
+    if (!currentAnalysisId || !currentAnalysisResult) return;
+    const v = currentAnalysisResult.final_verdict;
+    try {
+        await fetch(`/api/feedback/${currentAnalysisId}`, {
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({
+                email_content: currentAnalysisResult.input.email_content,
+                ai_verdict_phishing: v.is_phishing,
+                human_agreed: agreed,
+                threat_level: v.threat_level
+            })
+        });
+        document.getElementById('feedback-result').innerHTML = agreed
+            ? '<span style="color:var(--green);">Feedback recorded.</span>'
+            : '<span style="color:var(--yellow);">Feedback recorded. Will help improve the model.</span>';
+    } catch (e) { console.error(e); }
+}
+
+async function loadAuditLogs() {
+    try {
+        const res = await fetch('/api/audit/logs');
+        const data = await res.json();
+        const tbody = document.getElementById('logs-body');
+        if (!data.logs.length) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text2);padding:2rem;">No logs yet</td></tr>';
+            return;
         }
-    }
+        tbody.innerHTML = data.logs.map(l => `<tr>
+            <td style="white-space:nowrap;font-size:0.75rem;">${new Date(l.timestamp).toLocaleString()}</td>
+            <td><code style="font-size:0.75rem;color:var(--blue);">${l.analysis_id||'-'}</code></td>
+            <td><span class="actor-tag ${l.actor==='ai_engine'?'actor-ai':'actor-human'}">${l.actor==='ai_engine'?'AI':'Human'}</span></td>
+            <td style="font-size:0.8rem;">${l.action}</td>
+            <td style="max-width:280px;overflow:hidden;text-overflow:ellipsis;font-size:0.78rem;">${l.details||'-'}</td>
+        </tr>`).join('');
+    } catch (e) { console.error(e); }
+}
 
-    async function rejectAction(analysisId, actionId) {
-        const reason = prompt('Reason for rejection (optional):') || '';
-        try {
-            const res = await fetch(`/api/actions/${analysisId}/reject/${actionId}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ operator: 'human_operator', reason: reason })
-            });
-            const data = await res.json();
-            if (data.success) {
-                const remRes = await fetch(`/api/remediation/${analysisId}`);
-                const remData = await remRes.json();
-                displayRemediation(remData);
-            } else {
-                alert(data.error || 'Failed to reject action');
-            }
-        } catch (err) {
-            alert('Error: ' + err.message);
-        }
-    }
-
-    // ============================================
-    // FEEDBACK (Learning/Adaptation)
-    // ============================================
-    async function submitFeedback(agreed) {
-        if (!currentAnalysisId || !currentAnalysisResult) return;
-        const v = currentAnalysisResult.final_verdict;
-        try {
-            const res = await fetch(`/api/feedback/${currentAnalysisId}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email_content: currentAnalysisResult.input.email_content,
-                    ai_verdict_phishing: v.is_phishing,
-                    human_agreed: agreed,
-                    threat_level: v.threat_level
-                })
-            });
-            const data = await res.json();
-            const el = document.getElementById('feedback-result');
-            if (agreed) {
-                el.innerHTML = '<span style="color:var(--accent-green);">Feedback recorded: AI was correct. This reinforces the model.</span>';
-            } else {
-                el.innerHTML = '<span style="color:var(--accent-orange);">Feedback recorded: AI was wrong. This will help improve future detections.</span>';
-            }
-        } catch (err) {
-            console.error('Feedback error:', err);
-        }
-    }
-
-    // ============================================
-    // AUDIT LOGS
-    // ============================================
-    async function loadAuditLogs() {
-        try {
-            const res = await fetch('/api/audit/logs');
-            const data = await res.json();
-            const tbody = document.getElementById('logs-body');
-
-            if (data.logs.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-secondary);padding:2rem;">No logs yet. Run an analysis to generate logs.</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = data.logs.map(log => `
-                <tr>
-                    <td style="white-space:nowrap;font-size:0.78rem;">${new Date(log.timestamp).toLocaleString()}</td>
-                    <td><code style="color:var(--accent-cyan);">${log.analysis_id || '-'}</code></td>
-                    <td><span class="actor-badge ${log.actor === 'ai_engine' ? 'actor-ai' : 'actor-human'}">${log.actor === 'ai_engine' ? 'AI' : 'Human'}</span></td>
-                    <td>${log.action}</td>
-                    <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">${log.details || '-'}</td>
-                </tr>
-            `).join('');
-        } catch (err) {
-            console.error('Failed to load audit logs:', err);
-        }
-    }
-
-    // ============================================
-    // INIT
-    // ============================================
-    loadSamples();
+loadSamples();
 </script>
-
 </body>
 </html>
