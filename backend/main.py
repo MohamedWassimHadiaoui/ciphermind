@@ -18,7 +18,7 @@ ENDPOINTS:
   GET  /api/audit/logs                → Get all audit logs
 """
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,6 +26,8 @@ from pydantic import BaseModel
 from typing import Optional
 import os
 import json
+import time
+from collections import defaultdict
 
 from backend.engines.phishing_analyzer import analyze_email
 from backend.engines.remediation import (
@@ -52,6 +54,26 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ============================================================
+# Rate Limiting (protect Groq API credits)
+# ============================================================
+_rate_limit = defaultdict(list)
+RATE_LIMIT_MAX = 10        # max requests per window
+RATE_LIMIT_WINDOW = 60     # window in seconds
+
+@app.middleware("http")
+async def rate_limit_middleware(request: Request, call_next):
+    """Simple rate limiter for analysis endpoints to prevent API abuse."""
+    if request.url.path in ("/api/analyze", "/api/remediate"):
+        client_ip = request.client.host
+        now = time.time()
+        # Clean old entries
+        _rate_limit[client_ip] = [t for t in _rate_limit[client_ip] if now - t < RATE_LIMIT_WINDOW]
+        if len(_rate_limit[client_ip]) >= RATE_LIMIT_MAX:
+            raise HTTPException(status_code=429, detail="Rate limit exceeded. Try again in a minute.")
+        _rate_limit[client_ip].append(now)
+    return await call_next(request)
 
 
 # ============================================================
@@ -90,6 +112,13 @@ class AnalyzeRequest(BaseModel):
     email_content: str
     sender: Optional[str] = ""
 
+    def validate_size(self):
+        """Reject oversized inputs that could abuse the LLM API."""
+        if len(self.email_content) > 10000:
+            raise HTTPException(status_code=400, detail="Email content too long (max 10000 characters)")
+        if self.sender and len(self.sender) > 200:
+            raise HTTPException(status_code=400, detail="Sender field too long (max 200 characters)")
+
 class ActionDecision(BaseModel):
     """What the frontend sends when user approves/rejects an action."""
     operator: Optional[str] = "human_operator"
@@ -125,6 +154,7 @@ async def analyze(request: AnalyzeRequest):
     Run the full 6-stage phishing analysis pipeline.
     This is the main endpoint that does all the work.
     """
+    request.validate_size()
     result = await analyze_email(request.email_content, request.sender)
     return result
 

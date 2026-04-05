@@ -422,6 +422,14 @@ function setPipelineStep(id, delay) {
     }, delay);
 }
 
+// XSS sanitization — escape HTML in all API data before rendering
+function esc(str) {
+    if (str === null || str === undefined) return '';
+    const d = document.createElement('div');
+    d.appendChild(document.createTextNode(String(str)));
+    return d.innerHTML;
+}
+
 async function runAnalysis() {
     const content = document.getElementById('email-input').value.trim();
     const sender = document.getElementById('sender-input').value.trim();
@@ -472,8 +480,8 @@ function showResults(r) {
 
     // verdict
     document.getElementById('verdict-section').innerHTML = `
-        <div class="verdict-bar ${v.threat_level}">
-            <span class="tag tag-${v.threat_level}">${v.threat_level}</span>
+        <div class="verdict-bar ${esc(v.threat_level)}">
+            <span class="tag tag-${esc(v.threat_level)}">${esc(v.threat_level)}</span>
             <span style="font-weight:600;">${v.is_phishing ? 'Phishing detected' : 'Looks legitimate'}</span>
             <span style="margin-left:auto;font-size:0.8rem;color:var(--text2);">${(v.confidence*100).toFixed(1)}% confidence</span>
         </div>
@@ -511,17 +519,17 @@ function showResults(r) {
     // explanation
     document.getElementById('explanation-section').innerHTML = `
         <div class="explanation-block">
-            ${v.explanation}
-            ${v.targeted_institution ? `<br><br><strong>Target:</strong> ${v.targeted_institution}` : ''}
-            ${v.risk_to_citizen ? `<br><strong>Risk:</strong> ${v.risk_to_citizen}` : ''}
-            ${v.attack_techniques && v.attack_techniques.length ? `<br><strong>Techniques:</strong> ${v.attack_techniques.join(', ')}` : ''}
+            ${esc(v.explanation)}
+            ${v.targeted_institution ? `<br><br><strong>Target:</strong> ${esc(v.targeted_institution)}` : ''}
+            ${v.risk_to_citizen ? `<br><strong>Risk:</strong> ${esc(v.risk_to_citizen)}` : ''}
+            ${v.attack_techniques && v.attack_techniques.length ? `<br><strong>Techniques:</strong> ${esc(v.attack_techniques.join(', '))}` : ''}
         </div>
     `;
 
     // rules
     let fh = '';
     if (p.stage2_rules.explanations.length) {
-        p.stage2_rules.explanations.forEach(e => { fh += `<div class="finding">${e}</div>`; });
+        p.stage2_rules.explanations.forEach(e => { fh += `<div class="finding">${esc(e)}</div>`; });
     } else {
         fh = '<p style="color:var(--text2);font-size:0.82rem;">No rule-based findings.</p>';
     }
@@ -533,10 +541,10 @@ function showResults(r) {
         p.stage4_rag.matches.forEach(m => {
             rh += `<div class="rag-item">
                 <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <strong style="font-size:0.82rem;">${m.category}</strong>
-                    <span class="tag tag-${m.severity}">${m.severity}</span>
+                    <strong style="font-size:0.82rem;">${esc(m.category)}</strong>
+                    <span class="tag tag-${esc(m.severity)}">${esc(m.severity)}</span>
                 </div>
-                <div style="font-size:0.78rem;color:var(--text2);">Target: ${m.target} &middot; distance: ${m.similarity_distance !== null ? m.similarity_distance.toFixed(3) : '-'}</div>
+                <div style="font-size:0.78rem;color:var(--text2);">Target: ${esc(m.target)} &middot; distance: ${m.similarity_distance !== null ? m.similarity_distance.toFixed(3) : '-'}</div>
             </div>`;
         });
     } else {
@@ -573,12 +581,12 @@ function showRemediation(data) {
 
     data.actions.forEach(a => {
         const cls = a.status === 'approved' ? 'approved' : a.status === 'rejected' ? 'rejected' : 'pending';
-        html += `<div class="action-item ${cls}" id="action-${a.action_id}">
+        html += `<div class="action-item ${cls}" id="action-${esc(a.action_id)}">
             <div style="display:flex;justify-content:space-between;align-items:center;">
-                <strong style="font-size:0.85rem;">${a.title}</strong>
-                <span class="tag tag-${a.severity}">${a.severity}</span>
+                <strong style="font-size:0.85rem;">${esc(a.title)}</strong>
+                <span class="tag tag-${esc(a.severity)}">${esc(a.severity)}</span>
             </div>
-            <p style="font-size:0.8rem;color:var(--text2);margin:0.3rem 0;">${a.description}</p>
+            <p style="font-size:0.8rem;color:var(--text2);margin:0.3rem 0;">${esc(a.description)}</p>
             ${a.status === 'pending_approval' ? `
                 <div class="btns">
                     <button class="btn btn-green" onclick="approveAction('${currentAnalysisId}','${a.action_id}')">Approve</button>
@@ -646,11 +654,11 @@ async function loadAuditLogs() {
             return;
         }
         tbody.innerHTML = data.logs.map(l => `<tr>
-            <td style="white-space:nowrap;font-size:0.75rem;">${new Date(l.timestamp).toLocaleString()}</td>
-            <td><code style="font-size:0.75rem;color:var(--blue);">${l.analysis_id||'-'}</code></td>
+            <td style="white-space:nowrap;font-size:0.75rem;">${esc(new Date(l.timestamp).toLocaleString())}</td>
+            <td><code style="font-size:0.75rem;color:var(--blue);">${esc(l.analysis_id||'-')}</code></td>
             <td><span class="actor-tag ${l.actor==='ai_engine'?'actor-ai':'actor-human'}">${l.actor==='ai_engine'?'AI':'Human'}</span></td>
-            <td style="font-size:0.8rem;">${l.action}</td>
-            <td style="max-width:280px;overflow:hidden;text-overflow:ellipsis;font-size:0.78rem;">${l.details||'-'}</td>
+            <td style="font-size:0.8rem;">${esc(l.action)}</td>
+            <td style="max-width:280px;overflow:hidden;text-overflow:ellipsis;font-size:0.78rem;">${esc(l.details||'-')}</td>
         </tr>`).join('');
     } catch (e) { console.error(e); }
 }

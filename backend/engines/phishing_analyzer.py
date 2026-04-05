@@ -435,12 +435,19 @@ def compute_final_verdict(features: dict, llm_result: dict, ml_result: dict = No
 
 # Patterns that indicate prompt injection attempts
 _INJECTION_PATTERNS = [
+    # English injection patterns
     r'ignore\s+(?:all\s+)?(?:previous|above|prior)\s+instructions',
     r'you\s+are\s+now\s+(?:a|an)\s+',
     r'system\s*:\s*',
     r'<\s*(?:system|admin|root)\s*>',
     r'(?:forget|disregard|override)\s+(?:your|all)\s+(?:rules|instructions|guidelines)',
     r'\[INST\]|\[/INST\]|<<SYS>>|<</SYS>>',
+    # French injection patterns (Tunisian context)
+    r'ignor(?:ez?|er)\s+(?:toutes?\s+)?(?:les\s+)?instructions?\s+pr[ée]c[ée]dentes?',
+    r'oubli(?:ez?|er)\s+(?:vos|les|toutes)\s+(?:r[èe]gles|instructions|consignes)',
+    r'vous\s+[êe]tes\s+maintenant\s+',
+    r'r[ée]pond(?:ez|re|s)\s+(?:uniquement|seulement)\s+que',
+    r'dis?\s+que\s+(?:cet?\s+)?email\s+est\s+l[ée]gitime',
 ]
 
 

@@ -50,9 +50,19 @@
 ## 3. AI Defense Measures
 
 ### Prompt Injection Protection
+- Input sanitization layer strips known injection patterns in English AND French before the LLM prompt
 - User input is clearly delimited in the prompt with section headers
 - The LLM is instructed to respond ONLY with JSON, reducing the attack surface
 - Post-processing validates the JSON structure before displaying results
+
+### XSS Protection
+- All API data is HTML-escaped before DOM insertion using a dedicated `esc()` function
+- No raw `innerHTML` with unsanitized user or LLM-generated content
+
+### Rate Limiting & Input Validation
+- API rate limiter: max 10 analysis requests per minute per IP
+- Input size validation: max 10,000 characters for email content
+- Prevents API credit abuse and oversized payload attacks
 
 ### Hallucination Mitigation
 - Rule-based layer provides ground truth independent of the LLM
