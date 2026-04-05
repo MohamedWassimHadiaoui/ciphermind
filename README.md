@@ -60,7 +60,7 @@ Email Input
 
 ### Human Control (30% of evaluation)
 - **Zero auto-actions:** AI proposes remediation, humans must approve/reject each action
-- **Full audit trail:** Every AI decision and human action logged to SQLite with timestamps
+- **Per-stage audit trail:** Every pipeline stage (ETL, Rules, ML, RAG, LLM, Verdict) logged individually to SQLite with full metadata
 - **Feedback loop:** Human feedback stored to improve system accuracy over time
 
 ### Explainable AI - XAI (30% of evaluation)
@@ -68,13 +68,15 @@ Email Input
 - **ML key words:** Top 5 words that influenced the ML model, with weights and direction
 - **LLM explanation:** Natural language explanation citing specific evidence
 - **Score breakdown:** Visual meters showing Rules, ML, LLM, and Final scores with formula
-- **RAG matches:** Similar known Tunisian attacks with similarity scores
+- **RAG matches:** Similar known Tunisian attacks with similarity scores (noise-filtered by distance threshold)
 
 ### Engineering Depth (25% of evaluation)
 - **6-stage pipeline:** ETL → Rules → ML → RAG → LLM → Aggregation
 - **3 independent AI signals:** Not a basic API wrapper - real multi-model architecture
-- **RAG with ChromaDB:** Vector-based similarity search for known attack patterns
+- **RAG with ChromaDB:** Vector-based similarity search with distance thresholding to filter noisy matches
 - **Structured prompts:** Pre/post-processing around LLM calls with JSON validation
+- **Input sanitization:** Prompt injection defense strips known attack patterns before LLM analysis
+- **Legitimate domain whitelist:** Official Tunisian domains (biat.com.tn, poste.tn, etc.) excluded from false-positive URL flagging
 - **Docker-ready:** Full containerization with docker-compose
 
 ### Tunisian Impact (25% of evaluation)
@@ -163,10 +165,10 @@ ciphermind/
 | GET | `/api/samples` | 5 demo phishing samples |
 | POST | `/api/analyze` | Run 6-stage phishing analysis |
 | POST | `/api/remediate/{id}` | Generate remediation actions |
-| POST | `/api/actions/{id}/approve/{aid}` | Approve an action (HITL) |
-| POST | `/api/actions/{id}/reject/{aid}` | Reject an action (HITL) |
+| POST | `/api/actions/{id}/approve/{aid}` | Approve an action (human control) |
+| POST | `/api/actions/{id}/reject/{aid}` | Reject an action (human control) |
 | GET | `/api/remediation/{id}` | Get remediation status |
-| GET | `/api/audit/logs` | Get audit trail |
+| GET | `/api/audit/logs` | Per-stage audit trail (6 events per analysis) |
 | POST | `/api/feedback/{id}` | Submit feedback on AI accuracy |
 | GET | `/api/feedback/stats` | Get learning statistics |
 
