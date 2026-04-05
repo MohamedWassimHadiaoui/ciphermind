@@ -112,12 +112,17 @@ def query_similar_patterns(text: str, n_results: int = 3) -> list:
         n_results=min(n_results, _collection.count())
     )
 
-    # Format the results into a clean list
+    # Format the results into a clean list, filtering out weak matches
+    # Lower distance = more similar. Threshold filters noisy results.
+    SIMILARITY_THRESHOLD = 1.5
     similar_patterns = []
     for i in range(len(results["ids"][0])):
+        distance = results["distances"][0][i] if results["distances"] else None
+        if distance is not None and distance > SIMILARITY_THRESHOLD:
+            continue  # Skip weak matches that would add noise
         similar_patterns.append({
             "pattern_id": results["ids"][0][i],
-            "distance": results["distances"][0][i] if results["distances"] else None,
+            "distance": distance,
             "document": results["documents"][0][i],
             "metadata": results["metadatas"][0][i]
         })

@@ -435,12 +435,12 @@ function showResults(r) {
     const ml = p.ml_model || {};
     document.getElementById('score-section').innerHTML = `
         <div class="scores">
-            <div class="score-card"><div class="val" style="color:${scoreColor(p.layer1_rules.score/100)}">${p.layer1_rules.score}</div><div class="lbl">Rules</div></div>
+            <div class="score-card"><div class="val" style="color:${scoreColor(p.stage2_rules.score/100)}">${p.stage2_rules.score}</div><div class="lbl">Rules</div></div>
             <div class="score-card"><div class="val" style="color:${ml.available ? scoreColor(ml.confidence) : 'var(--text2)'}">${ml.available ? (ml.confidence*100).toFixed(0)+'%' : '-'}</div><div class="lbl">ML</div></div>
-            <div class="score-card"><div class="val" style="color:${scoreColor(p.layer3_llm.confidence||0)}">${((p.layer3_llm.confidence||0)*100).toFixed(0)}%</div><div class="lbl">LLM</div></div>
-            <div class="score-card" style="border:1px solid var(--blue);"><div class="val" style="color:${scoreColor(p.layer4_verdict.final_score)}">${(p.layer4_verdict.final_score*100).toFixed(1)}%</div><div class="lbl">Final</div></div>
+            <div class="score-card"><div class="val" style="color:${scoreColor(p.stage5_llm.confidence||0)}">${((p.stage5_llm.confidence||0)*100).toFixed(0)}%</div><div class="lbl">LLM</div></div>
+            <div class="score-card" style="border:1px solid var(--blue);"><div class="val" style="color:${scoreColor(p.stage6_verdict.final_score)}">${(p.stage6_verdict.final_score*100).toFixed(1)}%</div><div class="lbl">Final</div></div>
         </div>
-        <div style="text-align:center;font-size:0.7rem;color:var(--text2);">${p.layer4_verdict.score_breakdown.formula}</div>
+        <div style="text-align:center;font-size:0.7rem;color:var(--text2);">${p.stage6_verdict.score_breakdown.formula}</div>
         ${p.etl ? `<div class="meta-tags">
             <span class="meta-tag">lang: ${p.etl.language}</span>
             <span class="meta-tag">${p.etl.word_count} words</span>
@@ -472,8 +472,8 @@ function showResults(r) {
 
     // rules
     let fh = '';
-    if (p.layer1_rules.explanations.length) {
-        p.layer1_rules.explanations.forEach(e => { fh += `<div class="finding">${e}</div>`; });
+    if (p.stage2_rules.explanations.length) {
+        p.stage2_rules.explanations.forEach(e => { fh += `<div class="finding">${e}</div>`; });
     } else {
         fh = '<p style="color:var(--text2);font-size:0.82rem;">No rule-based findings.</p>';
     }
@@ -481,8 +481,8 @@ function showResults(r) {
 
     // rag
     let rh = '';
-    if (p.layer2_rag.matches.length) {
-        p.layer2_rag.matches.forEach(m => {
+    if (p.stage4_rag.matches.length) {
+        p.stage4_rag.matches.forEach(m => {
             rh += `<div class="rag-item">
                 <div style="display:flex;justify-content:space-between;align-items:center;">
                     <strong style="font-size:0.82rem;">${m.category}</strong>

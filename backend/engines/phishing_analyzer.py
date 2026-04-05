@@ -118,6 +118,13 @@ def extract_features(email_content: str, sender: str = "") -> dict:
     # --- Check for suspicious URLs ---
     urls_found = re.findall(r'https?://[^\s<>"\']+', email_content)
     for url in urls_found:
+        # Skip URLs from known legitimate Tunisian domains
+        url_domain = re.search(r'https?://(?:www\.)?([^/]+)', url)
+        if url_domain:
+            domain = url_domain.group(1).lower()
+            if any(domain == legit or domain.endswith("." + legit) for legit in LEGITIMATE_TN_DOMAINS):
+                continue
+
         for pattern in SUSPICIOUS_URL_PATTERNS:
             if re.search(pattern, url, re.IGNORECASE):
                 features["suspicious_urls"].append(url)
@@ -423,6 +430,36 @@ def compute_final_verdict(features: dict, llm_result: dict, ml_result: dict = No
 
 
 # ============================================================
+# INPUT SANITIZATION (Prompt Injection Defense)
+# ============================================================
+
+# Patterns that indicate prompt injection attempts
+_INJECTION_PATTERNS = [
+    r'ignore\s+(?:all\s+)?(?:previous|above|prior)\s+instructions',
+    r'you\s+are\s+now\s+(?:a|an)\s+',
+    r'system\s*:\s*',
+    r'<\s*(?:system|admin|root)\s*>',
+    r'(?:forget|disregard|override)\s+(?:your|all)\s+(?:rules|instructions|guidelines)',
+    r'\[INST\]|\[/INST\]|<<SYS>>|<</SYS>>',
+]
+
+
+def _sanitize_input(text: str) -> str:
+    """
+    Sanitize user input to defend against prompt injection.
+
+    Strips known injection patterns and flags suspicious content.
+    The original text is preserved for analysis (we still need to detect
+    phishing in the actual content), but injection payloads targeting
+    our LLM are neutralized.
+    """
+    sanitized = text
+    for pattern in _INJECTION_PATTERNS:
+        sanitized = re.sub(pattern, '[FILTERED]', sanitized, flags=re.IGNORECASE)
+    return sanitized
+
+
+# ============================================================
 # MAIN ANALYSIS FUNCTION (Orchestrates all 6 stages)
 # ============================================================
 
@@ -438,23 +475,73 @@ async def analyze_email(email_content: str, sender: str = "") -> dict:
     analysis_id = str(uuid.uuid4())[:8]
     timestamp = datetime.now(timezone.utc).isoformat()
 
-    # --- ETL PIPELINE: Extract, Transform, Load ---
-    etl_data = run_etl_pipeline(email_content, sender)
+    # --- INPUT SANITIZATION (prompt injection defense) ---
+    sanitized_content = _sanitize_input(email_content)
+    sanitized_sender = _sanitize_input(sender) if sender else ""
 
-    # --- LAYER 1: Rule-based feature extraction ---
-    features = extract_features(email_content, sender)
+    # --- STAGE 1: ETL PIPELINE ---
+    etl_data = run_etl_pipeline(sanitized_content, sanitized_sender)
+    log_event(
+        analysis_id=analysis_id, event_type="pipeline_stage", actor="ai_engine",
+        action="stage_1_etl_complete",
+        details=f"Language: {etl_data.language}, URLs: {len(etl_data.urls)}, Words: {etl_data.word_count}",
+        metadata={"stage": 1, "language": etl_data.language, "urls_found": len(etl_data.urls),
+                  "word_count": etl_data.word_count}
+    )
 
-    # --- ML MODEL DETECTION ---
-    ml_result = predict_phishing(email_content)
+    # --- STAGE 2: Rule-based feature extraction ---
+    features = extract_features(sanitized_content, sanitized_sender)
+    log_event(
+        analysis_id=analysis_id, event_type="pipeline_stage", actor="ai_engine",
+        action="stage_2_rules_complete",
+        details=f"Rule score: {features['rule_score']}/100, "
+                f"Suspicious URLs: {len(features['suspicious_urls'])}, "
+                f"Urgency indicators: {len(features['urgency_indicators'])}",
+        metadata={"stage": 2, "rule_score": features["rule_score"],
+                  "suspicious_urls": len(features["suspicious_urls"]),
+                  "urgency_indicators": len(features["urgency_indicators"]),
+                  "credential_requests": len(features["credential_requests"])}
+    )
 
-    # --- LAYER 2: RAG context retrieval ---
-    rag_results = query_similar_patterns(email_content, n_results=3)
+    # --- STAGE 3: ML MODEL DETECTION ---
+    ml_result = predict_phishing(sanitized_content)
+    log_event(
+        analysis_id=analysis_id, event_type="pipeline_stage", actor="ai_engine",
+        action="stage_3_ml_complete",
+        details=f"ML available: {ml_result.get('available')}, "
+                f"Phishing: {ml_result.get('is_phishing')}, "
+                f"Confidence: {ml_result.get('ml_confidence', 0):.2f}",
+        metadata={"stage": 3, "ml_available": ml_result.get("available", False),
+                  "is_phishing": ml_result.get("is_phishing"),
+                  "confidence": ml_result.get("ml_confidence", 0)}
+    )
 
-    # --- LAYER 3: LLM analysis ---
-    prompt = build_analysis_prompt(email_content, sender, features, rag_results)
+    # --- STAGE 4: RAG context retrieval ---
+    rag_results = query_similar_patterns(sanitized_content, n_results=3)
+    log_event(
+        analysis_id=analysis_id, event_type="pipeline_stage", actor="ai_engine",
+        action="stage_4_rag_complete",
+        details=f"RAG matches found: {len(rag_results)}"
+                + (f", closest: {rag_results[0]['metadata']['category']} "
+                   f"(dist={rag_results[0]['distance']:.3f})" if rag_results else ""),
+        metadata={"stage": 4, "matches_found": len(rag_results),
+                  "match_categories": [r["metadata"]["category"] for r in rag_results]}
+    )
+
+    # --- STAGE 5: LLM analysis ---
+    prompt = build_analysis_prompt(sanitized_content, sanitized_sender, features, rag_results)
     llm_result = await analyze_with_llm(prompt)
+    log_event(
+        analysis_id=analysis_id, event_type="pipeline_stage", actor="ai_engine",
+        action="stage_5_llm_complete",
+        details=f"LLM classification: {llm_result.get('classification', 'N/A')}, "
+                f"Confidence: {llm_result.get('confidence', 0)}",
+        metadata={"stage": 5, "classification": llm_result.get("classification"),
+                  "confidence": llm_result.get("confidence", 0),
+                  "threat_level": llm_result.get("threat_level")}
+    )
 
-    # --- LAYER 4: Threat Aggregation (combines all signals) ---
+    # --- STAGE 6: Threat Aggregation ---
     verdict = compute_final_verdict(features, llm_result, ml_result)
 
     # Build the complete result
@@ -473,7 +560,7 @@ async def analyze_email(email_content: str, sender: str = "") -> dict:
                 "entities": etl_data.extracted_entities,
                 "structural_features": etl_data.metadata.get("structural_features", {})
             },
-            "layer1_rules": {
+            "stage2_rules": {
                 "score": features["rule_score"],
                 "suspicious_urls": features["suspicious_urls"],
                 "urgency_indicators": features["urgency_indicators"],
@@ -487,7 +574,7 @@ async def analyze_email(email_content: str, sender: str = "") -> dict:
                 "confidence": ml_result.get("ml_confidence", 0),
                 "top_features": ml_result.get("top_features", [])
             },
-            "layer2_rag": {
+            "stage4_rag": {
                 "similar_patterns_found": len(rag_results),
                 "matches": [
                     {
@@ -500,8 +587,8 @@ async def analyze_email(email_content: str, sender: str = "") -> dict:
                     for r in rag_results
                 ]
             },
-            "layer3_llm": llm_result,
-            "layer4_verdict": verdict
+            "stage5_llm": llm_result,
+            "stage6_verdict": verdict
         },
         "final_verdict": {
             "is_phishing": verdict["is_phishing"],
@@ -514,22 +601,22 @@ async def analyze_email(email_content: str, sender: str = "") -> dict:
         }
     }
 
-    # --- LOG to audit trail ---
+    # --- STAGE 6: Log final aggregation ---
     log_event(
         analysis_id=analysis_id,
-        event_type="analysis",
+        event_type="pipeline_stage",
         actor="ai_engine",
-        action="phishing_analysis_completed",
-        details=f"Verdict: {'PHISHING' if verdict['is_phishing'] else 'LEGITIMATE'} "
-                f"(confidence: {verdict['final_score']:.1%})",
-        metadata={
-            "threat_level": verdict["threat_level"],
-            "rule_score": features["rule_score"],
-            "ml_confidence": ml_result.get("ml_confidence", 0),
-            "llm_confidence": llm_result.get("confidence", 0),
-            "final_score": verdict["final_score"],
-            "rag_matches": len(rag_results)
-        }
+        action="stage_6_verdict_complete",
+        details=f"Final verdict: {'PHISHING' if verdict['is_phishing'] else 'LEGITIMATE'} "
+                f"({verdict['threat_level']}, score={verdict['final_score']:.1%}), "
+                f"Formula: {verdict['score_breakdown']['formula']}",
+        metadata={"stage": 6, "threat_level": verdict["threat_level"],
+                  "final_score": verdict["final_score"],
+                  "rule_score": features["rule_score"],
+                  "ml_confidence": ml_result.get("ml_confidence", 0),
+                  "llm_confidence": llm_result.get("confidence", 0),
+                  "rag_matches": len(rag_results),
+                  "formula": verdict["score_breakdown"]["formula"]}
     )
 
     return result
