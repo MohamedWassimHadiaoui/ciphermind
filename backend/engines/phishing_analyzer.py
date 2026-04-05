@@ -448,6 +448,13 @@ _INJECTION_PATTERNS = [
     r'vous\s+[êe]tes\s+maintenant\s+',
     r'r[ée]pond(?:ez|re|s)\s+(?:uniquement|seulement)\s+que',
     r'dis?\s+que\s+(?:cet?\s+)?email\s+est\s+l[ée]gitime',
+    # Tunisian Arabic (Derja) injection patterns
+    r'تجاهل\s+(?:الكل|جميع)?\s*(?:التعليمات|الأوامر)',        # tajahel ta3limet - ignore instructions
+    r'انسى?\s+(?:الكل|كل)?\s*(?:القواعد|التعليمات|اللي\s+قالوك)',  # ensa el 9awa3ed - forget the rules
+    r'إنت[يا]?\s+تو[اّ]?\s+',                                  # enta tawa - you are now
+    r'قول\s+(?:الي|إلي|elli)?\s+(?:هذا|هالـ?)?\s*(?:إيمايل|ميل)\s+(?:صحيح|سليم|آمن)',  # 9oul eli safe
+    r'ما\s*تعملش\s+(?:تحليل|analyse)',                          # ma ta3melch analyse - don't analyze
+    r'بدّل\s+(?:النتيجة|الجواب|الرد)',                          # baddel el natija - change the result
 ]
 
 

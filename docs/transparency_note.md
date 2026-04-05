@@ -50,7 +50,7 @@
 ## 3. AI Defense Measures
 
 ### Prompt Injection Protection
-- Input sanitization layer strips known injection patterns in English AND French before the LLM prompt
+- Input sanitization layer strips known injection patterns in English, French AND Tunisian Arabic (Derja) before the LLM prompt
 - User input is clearly delimited in the prompt with section headers
 - The LLM is instructed to respond ONLY with JSON, reducing the attack surface
 - Post-processing validates the JSON structure before displaying results
