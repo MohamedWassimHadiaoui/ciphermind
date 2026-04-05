@@ -88,6 +88,7 @@ Email Input
 - **Cybersecurity-themed dashboard:** Dark theme with real-time pipeline visualization
 - **Interactive analysis:** Click demo samples or paste your own emails
 - **Score breakdown:** Visual confidence meters and scoring formula transparency
+- **Built-in Docs tab:** Architecture diagram, transparency note, dataset/bias docs, AI defense writeup, and Docker config all viewable from the dashboard (no need to dig through the repo)
 
 ## Quick Start
 
@@ -141,7 +142,7 @@ ciphermind/
 │       ├── knowledge_base.py      # ChromaDB RAG setup
 │       └── tunisian_patterns.json # 8 Tunisian threat patterns
 ├── frontend/
-│   └── index.html                 # Dashboard (single-page app, 3 tabs)
+│   └── index.html                 # Dashboard (single-page app, 4 tabs)
 ├── samples/
 │   └── phishing_samples.json      # 5 demo samples (4 phishing + 1 legit)
 ├── docs/
@@ -171,6 +172,9 @@ ciphermind/
 | GET | `/api/audit/logs` | Per-stage audit trail (6 events per analysis) |
 | POST | `/api/feedback/{id}` | Submit feedback on AI accuracy |
 | GET | `/api/feedback/stats` | Get learning statistics |
+| GET | `/api/docs/architecture` | Architecture document |
+| GET | `/api/docs/transparency` | Transparency note |
+| GET | `/api/docs/stack` | Dockerfile + docker-compose |
 
 ## Tech Stack
 

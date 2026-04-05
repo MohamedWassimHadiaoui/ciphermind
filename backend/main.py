@@ -231,3 +231,42 @@ async def submit_feedback(analysis_id: str, feedback: FeedbackRequest):
 async def feedback_stats():
     """Get learning/adaptation statistics from accumulated human feedback."""
     return get_feedback_stats()
+
+
+# ============================================================
+# Documentation Endpoints (serve project deliverables)
+# ============================================================
+DOCS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "docs")
+
+@app.get("/api/docs/architecture")
+async def get_architecture():
+    """Serve the architecture document."""
+    path = os.path.join(DOCS_DIR, "architecture.md")
+    with open(path, "r", encoding="utf-8") as f:
+        return {"title": "Architecture Document", "content": f.read()}
+
+@app.get("/api/docs/transparency")
+async def get_transparency():
+    """Serve the transparency note."""
+    path = os.path.join(DOCS_DIR, "transparency_note.md")
+    with open(path, "r", encoding="utf-8") as f:
+        return {"title": "Transparency Note", "content": f.read()}
+
+@app.get("/api/docs/stack")
+async def get_stack():
+    """Serve tech stack and Docker info."""
+    dockerfile_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "Dockerfile")
+    compose_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "docker-compose.yml")
+    dockerfile = ""
+    compose = ""
+    try:
+        with open(dockerfile_path, "r", encoding="utf-8") as f:
+            dockerfile = f.read()
+    except FileNotFoundError:
+        dockerfile = "Dockerfile not found"
+    try:
+        with open(compose_path, "r", encoding="utf-8") as f:
+            compose = f.read()
+    except FileNotFoundError:
+        compose = "docker-compose.yml not found"
+    return {"dockerfile": dockerfile, "docker_compose": compose}

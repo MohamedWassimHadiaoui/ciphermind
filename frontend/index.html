@@ -212,6 +212,20 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         .hidden { display: none !important; }
         .log-scroll { max-height: 450px; overflow-y: auto; }
+        .doc-tab-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+        .md-render h1 { font-size: 1.1rem; color: #fff; margin: 1.2rem 0 0.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
+        .md-render h2 { font-size: 1rem; color: #fff; margin: 1rem 0 0.4rem; }
+        .md-render h3 { font-size: 0.9rem; color: var(--blue); margin: 0.8rem 0 0.3rem; }
+        .md-render p { margin: 0.4rem 0; }
+        .md-render ul, .md-render ol { margin: 0.3rem 0 0.3rem 1.5rem; }
+        .md-render li { margin: 0.15rem 0; }
+        .md-render pre { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0.8rem; overflow-x: auto; font-size: 0.75rem; font-family: 'Consolas', 'Monaco', monospace; margin: 0.5rem 0; white-space: pre; color: var(--text); }
+        .md-render code { background: var(--bg3); padding: 0.1rem 0.3rem; border-radius: 3px; font-size: 0.8rem; font-family: 'Consolas', 'Monaco', monospace; }
+        .md-render pre code { background: none; padding: 0; }
+        .md-render table { width: 100%; border-collapse: collapse; margin: 0.5rem 0; font-size: 0.8rem; }
+        .md-render th { text-align: left; padding: 0.4rem; border-bottom: 2px solid var(--border); color: var(--text2); font-weight: 600; }
+        .md-render td { padding: 0.4rem; border-bottom: 1px solid var(--border); }
+        .md-render strong { color: #fff; }
         .meta-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
         .meta-tag { font-size: 0.7rem; padding: 0.2rem 0.5rem; background: var(--bg3); border-radius: 3px; color: var(--text2); }
     </style>
@@ -224,6 +238,7 @@
         <div class="nav-link active" onclick="switchTab('analysis')">Analysis</div>
         <div class="nav-link" onclick="switchTab('remediation')">Remediation</div>
         <div class="nav-link" onclick="switchTab('audit')">Audit Logs</div>
+        <div class="nav-link" onclick="switchTab('docs')">Docs</div>
     </div>
 </nav>
 
@@ -323,6 +338,38 @@
         </div>
     </div>
 
+    <!-- DOCS TAB -->
+    <div id="tab-docs" class="tab-content">
+        <div style="display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap;">
+            <button class="btn btn-blue doc-tab-btn active" onclick="switchDocSection('arch')">Architecture</button>
+            <button class="btn btn-outline doc-tab-btn" onclick="switchDocSection('transparency')">Transparency Note</button>
+            <button class="btn btn-outline doc-tab-btn" onclick="switchDocSection('dataset')">Dataset &amp; Bias</button>
+            <button class="btn btn-outline doc-tab-btn" onclick="switchDocSection('defense')">AI Defense</button>
+            <button class="btn btn-outline doc-tab-btn" onclick="switchDocSection('docker')">Docker</button>
+        </div>
+
+        <div class="panel doc-section" id="doc-arch">
+            <h3>System Architecture</h3>
+            <div id="arch-content" style="font-size:0.82rem;line-height:1.6;">Loading...</div>
+        </div>
+        <div class="panel doc-section hidden" id="doc-transparency">
+            <h3>Transparency Note</h3>
+            <div id="transparency-content" style="font-size:0.82rem;line-height:1.6;">Loading...</div>
+        </div>
+        <div class="panel doc-section hidden" id="doc-dataset">
+            <h3>Dataset &amp; Bias Management</h3>
+            <div id="dataset-content" style="font-size:0.82rem;line-height:1.6;"></div>
+        </div>
+        <div class="panel doc-section hidden" id="doc-defense">
+            <h3>AI Defense Measures</h3>
+            <div id="defense-content" style="font-size:0.82rem;line-height:1.6;"></div>
+        </div>
+        <div class="panel doc-section hidden" id="doc-docker">
+            <h3>Docker Configuration</h3>
+            <div id="docker-content" style="font-size:0.82rem;line-height:1.6;">Loading...</div>
+        </div>
+    </div>
+
 </div>
 
 <script>
@@ -332,10 +379,11 @@ let currentAnalysisResult = null;
 function switchTab(name) {
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    const idx = {analysis:0, remediation:1, audit:2}[name];
+    const idx = {analysis:0, remediation:1, audit:2, docs:3}[name];
     document.querySelectorAll('.nav-link')[idx].classList.add('active');
     document.getElementById('tab-' + name).classList.add('active');
     if (name === 'audit') loadAuditLogs();
+    if (name === 'docs' && !docsLoaded) loadDocs();
 }
 
 async function loadSamples() {
@@ -605,6 +653,108 @@ async function loadAuditLogs() {
             <td style="max-width:280px;overflow:hidden;text-overflow:ellipsis;font-size:0.78rem;">${l.details||'-'}</td>
         </tr>`).join('');
     } catch (e) { console.error(e); }
+}
+
+// ========== DOCS TAB ==========
+let docsLoaded = false;
+
+function renderMarkdown(md) {
+    // Simple markdown to HTML converter (no dependencies)
+    let html = md;
+    // Code blocks first (``` ... ```)
+    html = html.replace(/```([a-z]*)\n([\s\S]*?)```/g, (m, lang, code) => {
+        return `<pre><code>${code.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>`;
+    });
+    // Inline code
+    html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+    // Headers
+    html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+    html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+    html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+    // Bold
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    // Tables
+    html = html.replace(/^\|(.+)\|$/gm, (match) => {
+        const cells = match.split('|').filter(c => c.trim());
+        if (cells.every(c => /^[\s-:]+$/.test(c))) return ''; // separator row
+        const tag = 'td';
+        return '<tr>' + cells.map(c => `<${tag}>${c.trim()}</${tag}>`).join('') + '</tr>';
+    });
+    html = html.replace(/(<tr>[\s\S]*?<\/tr>)/g, (block) => {
+        if (!block.trim()) return block;
+        // Wrap consecutive rows in table
+        return block;
+    });
+    // Wrap table rows in table tags
+    html = html.replace(/((?:<tr>.*<\/tr>\s*)+)/g, '<table>$1</table>');
+    // First row of each table becomes th
+    html = html.replace(/<table><tr>(.*?)<\/tr>/g, (m, row) => {
+        return '<table><thead><tr>' + row.replace(/<td>/g,'<th>').replace(/<\/td>/g,'</th>') + '</tr></thead>';
+    });
+    // Unordered lists
+    html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+    html = html.replace(/((?:<li>.*<\/li>\s*)+)/g, '<ul>$1</ul>');
+    // Numbered lists
+    html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+    // Paragraphs (lines that aren't already tags)
+    html = html.replace(/^(?!<[a-z/])(.+)$/gm, '<p>$1</p>');
+    // Clean empty paragraphs
+    html = html.replace(/<p>\s*<\/p>/g, '');
+    return html;
+}
+
+function switchDocSection(name) {
+    document.querySelectorAll('.doc-section').forEach(s => s.classList.add('hidden'));
+    document.getElementById('doc-' + name).classList.remove('hidden');
+    document.querySelectorAll('.doc-tab-btn').forEach(b => { b.classList.remove('active'); b.classList.add('btn-outline'); b.classList.remove('btn-blue'); });
+    event.target.classList.add('active', 'btn-blue');
+    event.target.classList.remove('btn-outline');
+}
+
+async function loadDocs() {
+    docsLoaded = true;
+    try {
+        // Load architecture
+        const archRes = await fetch('/api/docs/architecture');
+        const archData = await archRes.json();
+        document.getElementById('arch-content').innerHTML = '<div class="md-render">' + renderMarkdown(archData.content) + '</div>';
+
+        // Load transparency note
+        const transRes = await fetch('/api/docs/transparency');
+        const transData = await transRes.json();
+        const transMd = transData.content;
+        document.getElementById('transparency-content').innerHTML = '<div class="md-render">' + renderMarkdown(transMd) + '</div>';
+
+        // Extract dataset & bias section from transparency note
+        const datasetMatch = transMd.match(/## 2\. Dataset[\s\S]*?(?=## 3\.|$)/);
+        document.getElementById('dataset-content').innerHTML = datasetMatch
+            ? '<div class="md-render">' + renderMarkdown(datasetMatch[0]) + '</div>'
+            : '<p style="color:var(--text2);">Not found in transparency note.</p>';
+
+        // Extract AI defense section from transparency note
+        const defenseMatch = transMd.match(/## 3\. AI Defense[\s\S]*?(?=## 4\.|$)/);
+        const sovereigntyMatch = transMd.match(/## 4\. Data Sovereignty[\s\S]*?(?=## 5\.|$)/);
+        const limitationsMatch = transMd.match(/## 5\. Limitations[\s\S]*$/);
+        let defenseMd = '';
+        if (defenseMatch) defenseMd += defenseMatch[0];
+        if (sovereigntyMatch) defenseMd += '\n' + sovereigntyMatch[0];
+        if (limitationsMatch) defenseMd += '\n' + limitationsMatch[0];
+        document.getElementById('defense-content').innerHTML = defenseMd
+            ? '<div class="md-render">' + renderMarkdown(defenseMd) + '</div>'
+            : '<p style="color:var(--text2);">Not found.</p>';
+
+        // Load Docker config
+        const dockerRes = await fetch('/api/docs/stack');
+        const dockerData = await dockerRes.json();
+        document.getElementById('docker-content').innerHTML = `<div class="md-render">
+            <h2>Dockerfile</h2>
+            <pre><code>${dockerData.dockerfile.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>
+            <h2>docker-compose.yml</h2>
+            <pre><code>${dockerData.docker_compose.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>
+        </div>`;
+    } catch (e) {
+        console.error('Failed to load docs:', e);
+    }
 }
 
 loadSamples();
